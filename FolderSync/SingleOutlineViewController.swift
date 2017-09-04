@@ -32,7 +32,7 @@ class SingleOutlineViewController: NSViewController {
         }
 
         rootPath = "/Users/wenyou/Documents/git"
-        outlineView = NSOutlineView()
+        outlineView = OutlineView()
         outlineView.dataSource = self
         outlineView.delegate = self
         outlineView.rowSizeStyle = .default
@@ -44,6 +44,10 @@ class SingleOutlineViewController: NSViewController {
             column.title = "title"
             return column
             }())
+        outlineView.indentationMarkerFollowsCell = false
+        outlineView.indentationPerLevel = 100
+        outlineView.register(NSNib.init(nibNamed: NSNib.Name("FileTableCellView"), bundle: nil), forIdentifier: NSUserInterfaceItemIdentifier("fileTableCellView"))
+
     }
 }
 
@@ -103,18 +107,46 @@ extension SingleOutlineViewController: NSOutlineViewDataSource {
 }
 
 extension SingleOutlineViewController: NSOutlineViewDelegate {
-//    func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
+    func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
 //        let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier.init("test"), owner: self)
 //        if let item = item as? String, let cellView = view as? NSTableCellView, let textField = cellView.textField {
 //            textField.stringValue = item
 //        }
 //        return view
+
+        let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("fileTableCellView"), owner: self)
+        view?.wantsLayer = true
+        view?.layer?.backgroundColor = NSColor.clear.cgColor
+        return view
+    }
+
+    func outlineView(_ outlineView: NSOutlineView, shouldShowOutlineCellForItem item: Any) -> Bool {
+        return true
+
+    }
+
+
+    func outlineView(_ outlineView: NSOutlineView, willDisplayOutlineCell cell: Any, for tableColumn: NSTableColumn?, item: Any) {
+        NSLog("a")
+    }
+
+//    func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? {
+//        let view = NSTableRowView()
+//
+//        return view
 //    }
 
-    func outlineView(_ outlineView: NSOutlineView, dataCellFor tableColumn: NSTableColumn?, item: Any) -> NSCell? {
-        let cell = NSCell.init()
-//        cell = NSMakeSize(tableColumn?.width, 20)
-        cell.stringValue = item as! String
-        return cell
-    }
+//    func outlineView(_ outlineView: NSOutlineView, dataCellFor tableColumn: NSTableColumn?, item: Any) -> NSCell? {
+//        let cell = NSTextFieldCell()// NSCell.init(textCell: item as! String)
+////        cell.cellSize = NSMakeSize(tableColumn!.width, 20)
+////        cell.stringValue = item as! String
+//        cell.type = .imageCellType
+//        cell.stringValue = item as! String
+////        cell.image = NSWorkspace.shared.icon(forFile: item as! String)
+//        return cell
+//    }
+
+//    func outlineView(_ outlineView: NSOutlineView, shouldShowOutlineCellForItem item: Any) -> Bool {
+//        return true
+//    }
 }
