@@ -11,6 +11,10 @@ import Cocoa
 class SingleOutlineViewController: NSViewController {
     private let viewSize = NSMakeSize(800, 600)
 
+    private let outlineViewNibName = "FileOutlineView"
+    private let tableCellViewNibName = "FileTableCellView"
+    private let cellIdentifier = "fileTableCellView"
+
     var rootPath: String?
     fileprivate var outlineView: NSOutlineView!
 
@@ -24,30 +28,39 @@ class SingleOutlineViewController: NSViewController {
         view.wantsLayer = true
         view.frame = NSRect(origin: .zero, size: viewSize)
 
-        let scrollView = NSScrollView()
+        rootPath = "/Users/wenyou/Documents/work/git"
+
+        var views = [NSView]()
+        let arrayTemp: AutoreleasingUnsafeMutablePointer<NSArray?>? = AutoreleasingUnsafeMutablePointer<NSArray?>.init(&views)
+        if !Bundle.main.loadNibNamed(NSNib.Name(outlineViewNibName), owner: self, topLevelObjects: arrayTemp) { // view-based 不用 ib 的话, 前面的箭头需要重载 NSOutlineView 来设置才能显示
+            return
+        }
+        guard let scrollView = arrayTemp?.pointee?.filter({ (obj) -> Bool in
+            return obj is NSScrollView
+        }).first as? NSScrollView else {
+            return
+        }
+        guard let outlineView = scrollView.subviews.first?.subviews.first as? NSOutlineView else {
+            return
+        }
+        self.outlineView = outlineView
+
         scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = false
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints { (maker) in
             maker.edges.equalToSuperview()
         }
 
-        rootPath = "/Users/wenyou/Documents/git"
-        outlineView = OutlineView()
         outlineView.dataSource = self
         outlineView.delegate = self
-        outlineView.rowSizeStyle = .default
-        scrollView.contentView.documentView = outlineView
-        outlineView.addTableColumn({
-            let column = NSTableColumn.init(identifier: NSUserInterfaceItemIdentifier.init("test"))
-            column.width = 800
-            column.resizingMask = .autoresizingMask
-            column.title = "title"
-            return column
-            }())
-        outlineView.indentationMarkerFollowsCell = false
-        outlineView.indentationPerLevel = 100
-        outlineView.register(NSNib.init(nibNamed: NSNib.Name("FileTableCellView"), bundle: nil), forIdentifier: NSUserInterfaceItemIdentifier("fileTableCellView"))
-
+        outlineView.headerView = nil
+        outlineView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
+        outlineView.sizeLastColumnToFit()
+        outlineView.register(NSNib.init(nibNamed: NSNib.Name(tableCellViewNibName), bundle: nil), forIdentifier: NSUserInterfaceItemIdentifier(cellIdentifier)) // 为了重用
+        if let tableColumn = outlineView.tableColumns.first {
+            tableColumn.resizingMask = .autoresizingMask
+        }
     }
 }
 
@@ -108,45 +121,35 @@ extension SingleOutlineViewController: NSOutlineViewDataSource {
 
 extension SingleOutlineViewController: NSOutlineViewDelegate {
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
-//        let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier.init("test"), owner: self)
-//        if let item = item as? String, let cellView = view as? NSTableCellView, let textField = cellView.textField {
-//            textField.stringValue = item
-//        }
-//        return view
+        if let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(cellIdentifier), owner: self) as? NSTableCellView, let imageView = view.imageView, let textField = view.textField {
+            view.autoresizingMask = .width
 
-        let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("fileTableCellView"), owner: self)
-        view?.wantsLayer = true
-        view?.layer?.backgroundColor = NSColor.clear.cgColor
-        return view
+            imageView.image = NSWorkspace.shared.icon(forFile: item as! String)
+            imageView.snp.makeConstraints({ (maker) in
+                maker.left.equalToSuperview().offset(10)
+                maker.top.equalToSuperview()
+                maker.bottom.equalToSuperview()
+                maker.width.equalTo(imageView.snp.height)
+            })
+
+            textField.isEditable = false
+            textField.isSelectable = false
+            textField.isBordered = false
+            textField.stringValue = item as! String
+            textField.backgroundColor = .clear
+            textField.snp.makeConstraints({ (maker) in
+                maker.left.equalTo(imageView.snp.right).offset(10)
+                maker.top.equalToSuperview()
+                maker.bottom.equalToSuperview()
+                maker.right.equalToSuperview()
+            })
+
+            return view
+        }
+        return nil
     }
 
-    func outlineView(_ outlineView: NSOutlineView, shouldShowOutlineCellForItem item: Any) -> Bool {
-        return true
-
+    func outlineView(_ outlineView: NSOutlineView, heightOfRowByItem item: Any) -> CGFloat {
+        return 25
     }
-
-
-    func outlineView(_ outlineView: NSOutlineView, willDisplayOutlineCell cell: Any, for tableColumn: NSTableColumn?, item: Any) {
-        NSLog("a")
-    }
-
-//    func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? {
-//        let view = NSTableRowView()
-//
-//        return view
-//    }
-
-//    func outlineView(_ outlineView: NSOutlineView, dataCellFor tableColumn: NSTableColumn?, item: Any) -> NSCell? {
-//        let cell = NSTextFieldCell()// NSCell.init(textCell: item as! String)
-////        cell.cellSize = NSMakeSize(tableColumn!.width, 20)
-////        cell.stringValue = item as! String
-//        cell.type = .imageCellType
-//        cell.stringValue = item as! String
-////        cell.image = NSWorkspace.shared.icon(forFile: item as! String)
-//        return cell
-//    }
-
-//    func outlineView(_ outlineView: NSOutlineView, shouldShowOutlineCellForItem item: Any) -> Bool {
-//        return true
-//    }
 }
