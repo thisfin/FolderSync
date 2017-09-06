@@ -34,7 +34,10 @@ extension AppDelegate: NSApplicationDelegate {
         handlerWindow.delegate = self
         handlerWindow.styleMask = [.closable, .titled, .miniaturizable]
         handlerWindow.contentViewController = {
-            let controller = SingleOutlineViewController()
+//            let controller = SingleOutlineViewController()
+            let controller = FolderViewController()
+            controller.sourceFolderPath = "/Users/wenyou/Documents/work/git"
+            controller.targetFolderPath = "/Users/wenyou/Documents/work/dir"
             return controller
         }()
         handlerWindow.title = "Tree"
