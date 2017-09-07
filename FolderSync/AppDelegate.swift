@@ -38,6 +38,9 @@ extension AppDelegate: NSApplicationDelegate {
             let controller = FolderViewController()
             controller.sourceFolderPath = "/Users/wenyou/Documents/work/git"
             controller.targetFolderPath = "/Users/wenyou/Documents/work/dir"
+
+            FileObject.init(path: controller.targetFolderPath!).output()
+
             return controller
         }()
         handlerWindow.title = "Tree"
