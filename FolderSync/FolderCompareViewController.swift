@@ -14,6 +14,8 @@ class FolderCompareViewController: NSViewController {
     var sourceOutlineView: SingleOutlineView!
     var targetOutlineView: SingleOutlineView!
 
+    fileprivate var progressIndicator: NSProgressIndicator!
+
     override func loadView() {
         view = NSView()
     }
@@ -24,19 +26,17 @@ class FolderCompareViewController: NSViewController {
         view.wantsLayer = true
         view.frame = NSRect(origin: .zero, size: viewSize)
 
-        let textField1 = NSTextField.init(string: "文件相等判断条件:")
-        textField1.isEditable = false
-        textField1.isSelectable = false
-        textField1.isBordered = false
-        textField1.backgroundColor = .clear
-        view.addSubview(textField1)
-
         let hiddenFildButton = NSButton.init(checkboxWithTitle: "显示隐藏文件", target: self, action: nil)
         view.addSubview(hiddenFildButton)
 
-//        let compareFileButton = NSPopUpButton.init(radioButtonWithTitle: "文件相等判断条件", target: self, action: nil)
+        let compareFileField = NSTextField.init(string: "文件相等判断条件:")
+        compareFileField.isEditable = false
+        compareFileField.isSelectable = false
+        compareFileField.isBordered = false
+        compareFileField.backgroundColor = .clear
+        view.addSubview(compareFileField)
+
         let compareFileButton = NSPopUpButton.init(frame: .zero)
-        compareFileButton.title = "sdfsdf"
         compareFileButton.menu = {
             let menu = NSMenu.init()
             menu.addItem(withTitle: "文件名", action: nil, keyEquivalent: "")
@@ -44,30 +44,21 @@ class FolderCompareViewController: NSViewController {
             menu.addItem(withTitle: "md5", action: nil, keyEquivalent: "")
             return menu
             }()
-//        let compareFileButton = NSPopUpButton.init(checkboxWithTitle: "文件相等判断条件", target: self, action: nil)
-//        compareFileButton.preferredEdge = .maxY
-//        compareFileButton.pullsDown = false
-//        compareFileButton.addItems(withTitles: ["文件名", "文件大小", "md5"])
-//        compareFileButton
         view.addSubview(compareFileButton)
 
-        textField1.snp.makeConstraints { (maker) in
-//            maker.top.equalTo(radio3)
+        compareFileButton.snp.makeConstraints { (maker) in
+            maker.top.equalToSuperview().offset(10)
+            maker.right.equalToSuperview().offset(-10)
+        }
+
+        compareFileField.snp.makeConstraints { (maker) in
             maker.centerY.equalTo(compareFileButton)
             maker.right.equalTo(compareFileButton.snp.left).offset(-5)
         }
 
         hiddenFildButton.snp.makeConstraints { (maker) in
-//            maker.top.equalTo(radio1.snp.bottom).offset(10)
-            maker.centerY.equalTo(compareFileButton)
-            maker.right.equalTo(textField1.snp.left).offset(-10)
-        }
-
-        compareFileButton.snp.makeConstraints { (maker) in
-            maker.top.equalToSuperview().offset(10)
+            maker.top.equalTo(compareFileButton.snp.bottom).offset(10)
             maker.right.equalToSuperview().offset(-10)
-
-//            maker.width.equalTo(200)
         }
 
         var file1 = FileObject.init(path: "/Users/wenyou/Desktop/1")
@@ -90,7 +81,7 @@ class FolderCompareViewController: NSViewController {
 
         sourceOutlineView.snp.makeConstraints { (maker) in
             maker.left.equalToSuperview().offset(10)
-            maker.top.equalTo(compareFileButton.snp.bottom).offset(10)
+            maker.top.equalTo(hiddenFildButton.snp.bottom).offset(10)
 //            maker.top.equalToSuperview().offset(10)
             maker.bottom.equalToSuperview().offset(-10)
         }
@@ -98,10 +89,82 @@ class FolderCompareViewController: NSViewController {
         targetOutlineView.snp.makeConstraints { (maker) in
             maker.left.equalTo(sourceOutlineView.snp.right).offset(10)
             maker.right.equalToSuperview().offset(-10)
-            maker.top.equalTo(compareFileButton.snp.bottom).offset(10)
+            maker.top.equalTo(hiddenFildButton.snp.bottom).offset(10)
 //            maker.top.equalToSuperview().offset(10)
             maker.bottom.equalToSuperview().offset(-10)
             maker.width.equalTo(sourceOutlineView.snp.width).multipliedBy(1)
         }
+
+
+
+        progressIndicator = NSProgressIndicator.init()
+        progressIndicator.style = .bar
+        view.addSubview(progressIndicator)
+
+        let button = NSButton.init(title: "click", target: self, action: #selector(buttonClicked(_:)))
+        view.addSubview(button)
+        button.snp.makeConstraints { (maker) in
+            maker.top.equalToSuperview().offset(10)
+            maker.left.equalToSuperview().offset(10)
+        }
+    }
+
+    @objc func buttonClicked(_ sender: NSButton) {
+        let panel = NSPanel(contentRect: NSMakeRect(0, 0, 400, 200), styleMask: [.borderless, .hudWindow], backing: .buffered, defer: true)
+        let textField = NSTextField.init(frame: panel.contentLayoutRect)
+        textField.cell = WYVerticalCenterTextFieldCell()
+        textField.isEditable = false
+        textField.isSelectable = false
+        textField.isBordered = false
+        textField.alignment = .center
+        textField.textColor = .white
+        //        textField.font = font
+        textField.stringValue = "content"
+        if let contentView = panel.contentView { // 此处做颜色和圆角的处理
+            contentView.addSubview(textField)
+            contentView.wantsLayer = true
+            contentView.layer?.cornerRadius = 5
+            contentView.layer?.backgroundColor = panel.backgroundColor.cgColor // 使用默认 hudWindow 的颜色
+            panel.backgroundColor = .clear
+        }
+//        panel.center()
+        panel.beginSheet(view.window!, completionHandler: nil)
+//        panel.orderFront(self)
+    }
+
+    override func viewDidAppear() {
+        super.viewDidAppear()
+
+//        let alert = NSAlert.init()
+//        alert.messageText = "注意!"
+//        alert.informativeText = "覆盖后, 之前保存的组信息会全部清空"
+//        alert.alertStyle = .critical
+//        alert.addButton(withTitle: "取消")
+//        alert.addButton(withTitle: "确定")
+//        alert.beginSheetModal(for: NSApp.mainWindow!)
+
+
+        let panel = NSPanel(contentRect: NSMakeRect(0, 0, 400, 200), styleMask: [.borderless, .hudWindow], backing: .buffered, defer: true)
+        let textField = NSTextField.init(frame: panel.contentLayoutRect)
+        textField.cell = WYVerticalCenterTextFieldCell()
+        textField.isEditable = false
+        textField.isSelectable = false
+        textField.isBordered = false
+        textField.alignment = .center
+        textField.textColor = .white
+//        textField.font = font
+        textField.stringValue = "content"
+        if let contentView = panel.contentView { // 此处做颜色和圆角的处理
+            contentView.addSubview(textField)
+            contentView.wantsLayer = true
+            contentView.layer?.cornerRadius = 5
+            contentView.layer?.backgroundColor = panel.backgroundColor.cgColor // 使用默认 hudWindow 的颜色
+            panel.backgroundColor = .clear
+        }
+//        panel.center()
+//        panel.orderFront(self)
+
+//        panel.beginSheet(NSApp.mainWindow!, completionHandler: nil)
+//        view.window!.beginSheet(panel, completionHandler: nil)
     }
 }

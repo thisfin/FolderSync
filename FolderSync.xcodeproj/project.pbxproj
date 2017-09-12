@@ -19,6 +19,7 @@
 		6684812D1F5BF287006902AE /* FolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684812C1F5BF287006902AE /* FolderViewController.swift */; };
 		6684812F1F5BF54D006902AE /* SingleOutlineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684812E1F5BF54D006902AE /* SingleOutlineViewController.swift */; };
 		668481311F5DB07E006902AE /* FileTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 668481301F5DB07E006902AE /* FileTableCellView.xib */; };
+		66CFAAFD1F68184E0083C3EC /* WYVerticalCenterTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CFAAFC1F68184E0083C3EC /* WYVerticalCenterTextFieldCell.swift */; };
 		DA98C9A4B274D4549E309834 /* Pods_FolderSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C031BD6CF52C711DB76E2B /* Pods_FolderSync.framework */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 		6684812C1F5BF287006902AE /* FolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderViewController.swift; sourceTree = "<group>"; };
 		6684812E1F5BF54D006902AE /* SingleOutlineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleOutlineViewController.swift; sourceTree = "<group>"; };
 		668481301F5DB07E006902AE /* FileTableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FileTableCellView.xib; sourceTree = "<group>"; };
+		66CFAAFC1F68184E0083C3EC /* WYVerticalCenterTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WYVerticalCenterTextFieldCell.swift; sourceTree = "<group>"; };
 		D5C031BD6CF52C711DB76E2B /* Pods_FolderSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FolderSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -91,14 +93,15 @@
 				668481281F5B0FE5006902AE /* Application.swift */,
 				665AC8C11F5E9A8B00A16B19 /* FileObject.swift */,
 				665AC8C31F60F0FD00A16B19 /* FileService.swift */,
+				666D4B5D1F678D1C00ED3240 /* FolderCompareViewController.swift */,
 				6684812A1F5B10D4006902AE /* FolderSelectedViewController.swift */,
 				6684812C1F5BF287006902AE /* FolderViewController.swift */,
+				666D4B5F1F678D6700ED3240 /* SingleOutlineView.swift */,
 				6684812E1F5BF54D006902AE /* SingleOutlineViewController.swift */,
 				6684811C1F5B0B24006902AE /* Assets.xcassets */,
 				665AC8BF1F5E4B4B00A16B19 /* FileOutlineView.xib */,
 				668481301F5DB07E006902AE /* FileTableCellView.xib */,
-				666D4B5D1F678D1C00ED3240 /* FolderCompareViewController.swift */,
-				666D4B5F1F678D6700ED3240 /* SingleOutlineView.swift */,
+				66CFAAFC1F68184E0083C3EC /* WYVerticalCenterTextFieldCell.swift */,
 			);
 			path = FolderSync;
 			sourceTree = "<group>";
@@ -234,6 +237,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66CFAAFD1F68184E0083C3EC /* WYVerticalCenterTextFieldCell.swift in Sources */,
 				665AC8C21F5E9A8B00A16B19 /* FileObject.swift in Sources */,
 				665AC8C41F60F0FD00A16B19 /* FileService.swift in Sources */,
 				666D4B5E1F678D1C00ED3240 /* FolderCompareViewController.swift in Sources */,
