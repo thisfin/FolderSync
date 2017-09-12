@@ -10,6 +10,8 @@
 		665AC8C01F5E4B4B00A16B19 /* FileOutlineView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 665AC8BF1F5E4B4B00A16B19 /* FileOutlineView.xib */; };
 		665AC8C21F5E9A8B00A16B19 /* FileObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665AC8C11F5E9A8B00A16B19 /* FileObject.swift */; };
 		665AC8C41F60F0FD00A16B19 /* FileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665AC8C31F60F0FD00A16B19 /* FileService.swift */; };
+		666D4B5E1F678D1C00ED3240 /* FolderCompareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666D4B5D1F678D1C00ED3240 /* FolderCompareViewController.swift */; };
+		666D4B601F678D6700ED3240 /* SingleOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 666D4B5F1F678D6700ED3240 /* SingleOutlineView.swift */; };
 		6684811B1F5B0B24006902AE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684811A1F5B0B24006902AE /* AppDelegate.swift */; };
 		6684811D1F5B0B24006902AE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6684811C1F5B0B24006902AE /* Assets.xcassets */; };
 		668481291F5B0FE5006902AE /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668481281F5B0FE5006902AE /* Application.swift */; };
@@ -26,6 +28,8 @@
 		665AC8BF1F5E4B4B00A16B19 /* FileOutlineView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FileOutlineView.xib; sourceTree = "<group>"; };
 		665AC8C11F5E9A8B00A16B19 /* FileObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileObject.swift; sourceTree = "<group>"; };
 		665AC8C31F60F0FD00A16B19 /* FileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileService.swift; sourceTree = "<group>"; };
+		666D4B5D1F678D1C00ED3240 /* FolderCompareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCompareViewController.swift; sourceTree = "<group>"; };
+		666D4B5F1F678D6700ED3240 /* SingleOutlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleOutlineView.swift; sourceTree = "<group>"; };
 		668481171F5B0B24006902AE /* FolderSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FolderSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6684811A1F5B0B24006902AE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6684811C1F5B0B24006902AE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -93,6 +97,8 @@
 				6684811C1F5B0B24006902AE /* Assets.xcassets */,
 				665AC8BF1F5E4B4B00A16B19 /* FileOutlineView.xib */,
 				668481301F5DB07E006902AE /* FileTableCellView.xib */,
+				666D4B5D1F678D1C00ED3240 /* FolderCompareViewController.swift */,
+				666D4B5F1F678D6700ED3240 /* SingleOutlineView.swift */,
 			);
 			path = FolderSync;
 			sourceTree = "<group>";
@@ -230,7 +236,9 @@
 			files = (
 				665AC8C21F5E9A8B00A16B19 /* FileObject.swift in Sources */,
 				665AC8C41F60F0FD00A16B19 /* FileService.swift in Sources */,
+				666D4B5E1F678D1C00ED3240 /* FolderCompareViewController.swift in Sources */,
 				6684812F1F5BF54D006902AE /* SingleOutlineViewController.swift in Sources */,
+				666D4B601F678D6700ED3240 /* SingleOutlineView.swift in Sources */,
 				6684812D1F5BF287006902AE /* FolderViewController.swift in Sources */,
 				668481291F5B0FE5006902AE /* Application.swift in Sources */,
 				6684811B1F5B0B24006902AE /* AppDelegate.swift in Sources */,

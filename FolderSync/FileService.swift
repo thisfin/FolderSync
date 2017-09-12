@@ -9,105 +9,76 @@
 import Cocoa
 
 class FileService {
-    func traversalFolder(sourceFile: FileObject, targetFile: FileObject) -> (FileObject, FileObject) {
-        let source = FileObject.init(path: sourceFile.path)
-        let target = FileObject.init(path: targetFile.path)
-
+    func compareFolder(sourceFile: inout FileObject, targetFile: inout FileObject) {
         var sourceIterator = sourceFile.subFiles.makeIterator()
         var targetIterator = targetFile.subFiles.makeIterator()
 
+        var s = sourceIterator.next()
+        var t = targetIterator.next()
         while true {
-            let s = sourceIterator.next()
-            let t = targetIterator.next()
-
             if s != nil && t != nil {
-                if s!.name > t!.name {
+                if s!.name == t!.name {
+                    compareFile(sourceFile: &s!, targetFile: &t!)
 
+                    s = sourceIterator.next()
+                    t = targetIterator.next()
+                } else if s!.name > t!.name {
+                    // todo
+                    c2(file: t!)
+
+                    t = targetIterator.next()
                 } else {
+                    // todo
+                    c2(file: s!)
 
+                    s = sourceIterator.next()
                 }
             } else if s != nil {
-                
+                c2(file: s!)
+                s = sourceIterator.next()
             } else if t != nil {
-
+                c2(file: t!)
+                t = targetIterator.next()
             } else {
                 break
             }
         }
-
-        return (source, target)
     }
 
-    func compare(sourceFile: FileObject!, targetFile: FileObject!) {
-        if sourceFile == nil && targetFile == nil {
-            // over
-        } else if sourceFile == nil {
-            // 处理 target
-            handleTarget()
-            // source 是否补白
-        } else if targetFile == nil {
-            // 处理 sourece
-            handleSource()
-            // target 是否补白
-        } else {
-            // 处理
-            compare1(sourceFile: sourceFile, targetFile: targetFile)
+    func c2(file: FileObject) {
+        file.compareState = .only
+        file.subFiles.forEach { (fileObject) in
+            c2(file: fileObject)
         }
     }
 
-    func compare1(sourceFile: FileObject, targetFile: FileObject) {
-        if sourceFile.name == targetFile.name {
-            handleDouble(sourceFile: sourceFile, targetFile: targetFile)
-        } else if sourceFile.name > targetFile.name {
-            // 处理 target, target next
-            handleTarget()
-            // source 是否补白
-
-            // target next
-        } else {
-            // 处理 source, source next
-            handleSource()
-            // target 是否补白
-
-            // source next
-        }
-    }
-
-    func handleDouble(sourceFile: FileObject, targetFile: FileObject) {
+    func compareFile(sourceFile: inout FileObject, targetFile: inout FileObject) {
         if sourceFile.type != targetFile.type {
             if sourceFile.type == .folder {
-                // source 递归
-                // target file
+                c2(file: sourceFile)
+                targetFile.compareState = .diff
             } else {
-                // source file
-                // target 递归
+                sourceFile.compareState = .diff
+                c2(file: targetFile)
             }
         } else {
             if sourceFile.type == .folder {
-                // 双递归
+                compareFolder(sourceFile: &sourceFile, targetFile: &targetFile)
             } else {
                 // 文件 size & time 比较
                 let cr = sourceFile.modificationDate!.compare(targetFile.modificationDate! as Date)
                 switch cr {
                 case .orderedSame:
-                    // 相同
-                    ()
+                    sourceFile.compareState = .empty
+                    targetFile.compareState = .empty
                 case .orderedAscending:
-                    // source 旧
-                    ()
+                    sourceFile.compareState = .old
+                    targetFile.compareState = .new
                 case .orderedDescending:
-                    // target 旧
-                    ()
+                    sourceFile.compareState = .new
+                    targetFile.compareState = .old
                 }
             }
         }
-    }
-
-    func handleSource() {
-        // 递归设置only
-    }
-
-    func handleTarget() {
-        // 递归设置only
     }
 }

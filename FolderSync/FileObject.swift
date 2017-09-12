@@ -21,11 +21,11 @@ enum FileSourceType {
 }
 
 enum FileCompareState {
-    case new
-    case old
-    case only
-    case diff // folder only
-    case empty
+    case new    // file only
+    case old    // file only
+    case only   // folder & file
+    case diff   // folder only
+    case empty  // folder & file
 }
 
 class FileObject {
@@ -69,7 +69,9 @@ class FileObject {
 
         if type == .folder {
             if let urls = try? fileManager.contentsOfDirectory(at: URL(fileURLWithPath: self.path), includingPropertiesForKeys: nil, options: []) {
-                urls.forEach({ (url) in
+                urls.sorted(by: { (url1, url2) -> Bool in
+                    url1.lastPathComponent < url2.lastPathComponent
+                }).forEach({ (url) in
                     subFiles.append(FileObject(path: url.path, rootPath: rootPath == nil ? path : rootPath))
                 })
             }

@@ -32,21 +32,33 @@ extension AppDelegate: NSApplicationDelegate {
 
         handlerWindow = NSWindow()
         handlerWindow.delegate = self
-        handlerWindow.styleMask = [.closable, .titled, .miniaturizable]
+        handlerWindow.styleMask = [.closable, .titled, .miniaturizable, .resizable]
         handlerWindow.contentViewController = {
 //            let controller = SingleOutlineViewController()
-            let controller = FolderViewController()
-            controller.sourceFolderPath = "/Users/wenyou/Documents/work/git"
-            controller.targetFolderPath = "/Users/wenyou/Documents/work/dir"
-
-            FileObject.init(path: controller.targetFolderPath!).output()
+            let controller = FolderCompareViewController()
+//            let controller = FolderViewController()
+//            controller.sourceFolderPath = "/Users/wenyou/Documents/work/git"
+//            controller.targetFolderPath = "/Users/wenyou/Documents/work/dir"
+//
+//            FileObject.init(path: controller.targetFolderPath!).output()
 
             return controller
         }()
         handlerWindow.title = "Tree"
         handlerWindow.center()
         handlerWindow.makeKeyAndOrderFront(self)
+
+
+        var a = 5
+        NSLog("\(a)")
+        add(a: &a)
+        NSLog("\(a)")
     }
+
+    func add(a: inout Int) {
+        a = 2
+    }
+
 }
 
 extension AppDelegate: NSWindowDelegate {
