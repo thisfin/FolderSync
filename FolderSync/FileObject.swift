@@ -81,4 +81,34 @@ class FileObject {
     func output() {
         NSLog("")
     }
+
+    private func safeFileMD5() -> String? {
+        guard let file = FileHandle.init(forReadingAtPath: path) else {
+            return nil
+        }
+        defer {
+            file.closeFile()
+        }
+
+        var context = CC_MD5_CTX()
+        CC_MD5_Init(&context)
+
+        let bufferSize = 1024 * 1024
+        while case let data = file.readData(ofLength: bufferSize), data.count > 0 {
+            data.withUnsafeBytes({ (contentType) -> Void in
+                _ = CC_MD5_Update(&context, contentType, CC_LONG(data.count))
+            })
+        }
+
+        var digest = Data.init(count: Int(CC_MD5_DIGEST_LENGTH))
+        digest.withUnsafeMutableBytes { (contentType) -> Void in
+            _ = CC_MD5_Final(contentType, &context)
+        }
+
+        let hexDigest = digest.map({ (uInt8) -> String in
+            return String.init(format: "%02hhx", uInt8)
+        }).joined()
+
+        return hexDigest
+    }
 }

@@ -17,6 +17,8 @@ class FolderSelectedViewController: NSViewController {
     fileprivate var sourceTextField: NSTextField!
     fileprivate var targetTextField: NSTextField!
 
+    var nextAction: (() -> Void)?
+
     override func loadView() {
         view = NSView()
     }
@@ -37,11 +39,17 @@ class FolderSelectedViewController: NSViewController {
         sourceTextField.delegate = self
         sourceTextField.isEditable = false
         view.addSubview(sourceTextField)
+        if let sourcePath = UserDefaults.standard.string(forKey: Constants.sourceFolderPathKey), FileManager.default.fileExists(atPath: sourcePath) {
+            sourceTextField.stringValue = sourcePath
+        }
 
         targetTextField = NSTextField()
         targetTextField.delegate = self
         targetTextField.isEditable = false
         view.addSubview(targetTextField)
+        if let targetPath = UserDefaults.standard.string(forKey: Constants.targetFolderPathKey), FileManager.default.fileExists(atPath: targetPath) {
+            targetTextField.stringValue = targetPath
+        }
 
         nextButton = NSButton(title: "next", target: self, action: #selector(FolderSelectedViewController.nextButtonClicked(_:)))
         nextButton.isEnabled = false
@@ -82,11 +90,7 @@ class FolderSelectedViewController: NSViewController {
             make.height.equalTo(sourceButton)
         }
 
-//        if let filePathInfo = Preference.sharedInstance.readFilePahtInfo() {
-//            ttfTextField.stringValue = filePathInfo.ttfFilePath
-//            cssTextField.stringValue = filePathInfo.cssFilePath
-//            setSubmitButtonStatus()
-//        }
+        setSubmitButtonStatus()
     }
 
     fileprivate func folderSelect(_ folderType: String) {
@@ -96,6 +100,18 @@ class FolderSelectedViewController: NSViewController {
         panel.canChooseDirectories = true
         panel.canCreateDirectories = false
         panel.message = "select \(folderType) folder"
+        switch folderType {
+        case "source":
+            if sourceTextField.stringValue.count > 0 {
+                panel.directoryURL = URL(fileURLWithPath: sourceTextField.stringValue)
+            }
+        case "target":
+            if targetTextField.stringValue.count > 0 {
+                panel.directoryURL = URL(fileURLWithPath: targetTextField.stringValue)
+            }
+        default:
+            ()
+        }
         panel.begin { (handler) in
             if let path = panel.url, handler == NSApplication.ModalResponse.OK {
                 switch folderType {
@@ -112,13 +128,18 @@ class FolderSelectedViewController: NSViewController {
     }
 
     private func setSubmitButtonStatus() { // 下一步按钮状态设置
-        nextButton.isEnabled = sourceTextField.stringValue.characters.count > 0 && targetTextField.stringValue.characters.count > 0
+        let fileManager = FileManager.default
+        nextButton.isEnabled = fileManager.fileExists(atPath: sourceTextField.stringValue) && fileManager.fileExists(atPath: targetTextField.stringValue)
+        if nextButton.isEnabled {
+            UserDefaults.standard.set(sourceTextField.stringValue, forKey: Constants.sourceFolderPathKey)
+            UserDefaults.standard.set(targetTextField.stringValue, forKey: Constants.targetFolderPathKey)
+        }
     }
 }
 
 extension FolderSelectedViewController: NSTextFieldDelegate {
     func control(_ control: NSControl, textShouldEndEditing fieldEditor: NSText) -> Bool {
-
+        setSubmitButtonStatus()
         return true
     }
 }
@@ -133,9 +154,8 @@ extension FolderSelectedViewController: NSTextFieldDelegate {
     }
 
     func nextButtonClicked(_ sender: NSButton) {
-        let fileManager = FileManager.default
-        if let dict = try? fileManager.attributesOfItem(atPath: sourceTextField.stringValue) {
-            NSLog("\(dict)")
+        if let action = nextAction {
+            action()
         }
     }
 }

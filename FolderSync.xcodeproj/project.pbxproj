@@ -16,10 +16,8 @@
 		6684811D1F5B0B24006902AE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6684811C1F5B0B24006902AE /* Assets.xcassets */; };
 		668481291F5B0FE5006902AE /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668481281F5B0FE5006902AE /* Application.swift */; };
 		6684812B1F5B10D4006902AE /* FolderSelectedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684812A1F5B10D4006902AE /* FolderSelectedViewController.swift */; };
-		6684812D1F5BF287006902AE /* FolderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684812C1F5BF287006902AE /* FolderViewController.swift */; };
-		6684812F1F5BF54D006902AE /* SingleOutlineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6684812E1F5BF54D006902AE /* SingleOutlineViewController.swift */; };
 		668481311F5DB07E006902AE /* FileTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 668481301F5DB07E006902AE /* FileTableCellView.xib */; };
-		66CFAAFD1F68184E0083C3EC /* WYVerticalCenterTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CFAAFC1F68184E0083C3EC /* WYVerticalCenterTextFieldCell.swift */; };
+		66B1F1F41F69308500F846AF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B1F1F31F69308500F846AF /* Constants.swift */; };
 		DA98C9A4B274D4549E309834 /* Pods_FolderSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C031BD6CF52C711DB76E2B /* Pods_FolderSync.framework */; };
 /* End PBXBuildFile section */
 
@@ -38,10 +36,9 @@
 		668481221F5B0B24006902AE /* FolderSync.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FolderSync.entitlements; sourceTree = "<group>"; };
 		668481281F5B0FE5006902AE /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		6684812A1F5B10D4006902AE /* FolderSelectedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSelectedViewController.swift; sourceTree = "<group>"; };
-		6684812C1F5BF287006902AE /* FolderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderViewController.swift; sourceTree = "<group>"; };
-		6684812E1F5BF54D006902AE /* SingleOutlineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleOutlineViewController.swift; sourceTree = "<group>"; };
 		668481301F5DB07E006902AE /* FileTableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FileTableCellView.xib; sourceTree = "<group>"; };
-		66CFAAFC1F68184E0083C3EC /* WYVerticalCenterTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WYVerticalCenterTextFieldCell.swift; sourceTree = "<group>"; };
+		66B1F1EF1F691B9F00F846AF /* FolderSync-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FolderSync-Bridging-Header.h"; sourceTree = "<group>"; };
+		66B1F1F31F69308500F846AF /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		D5C031BD6CF52C711DB76E2B /* Pods_FolderSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FolderSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -88,20 +85,19 @@
 			isa = PBXGroup;
 			children = (
 				668481221F5B0B24006902AE /* FolderSync.entitlements */,
+				66B1F1EF1F691B9F00F846AF /* FolderSync-Bridging-Header.h */,
 				668481211F5B0B24006902AE /* Info.plist */,
 				6684811A1F5B0B24006902AE /* AppDelegate.swift */,
 				668481281F5B0FE5006902AE /* Application.swift */,
+				66B1F1F31F69308500F846AF /* Constants.swift */,
 				665AC8C11F5E9A8B00A16B19 /* FileObject.swift */,
 				665AC8C31F60F0FD00A16B19 /* FileService.swift */,
 				666D4B5D1F678D1C00ED3240 /* FolderCompareViewController.swift */,
 				6684812A1F5B10D4006902AE /* FolderSelectedViewController.swift */,
-				6684812C1F5BF287006902AE /* FolderViewController.swift */,
 				666D4B5F1F678D6700ED3240 /* SingleOutlineView.swift */,
-				6684812E1F5BF54D006902AE /* SingleOutlineViewController.swift */,
 				6684811C1F5B0B24006902AE /* Assets.xcassets */,
 				665AC8BF1F5E4B4B00A16B19 /* FileOutlineView.xib */,
 				668481301F5DB07E006902AE /* FileTableCellView.xib */,
-				66CFAAFC1F68184E0083C3EC /* WYVerticalCenterTextFieldCell.swift */,
 			);
 			path = FolderSync;
 			sourceTree = "<group>";
@@ -149,6 +145,7 @@
 				TargetAttributes = {
 					668481161F5B0B24006902AE = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -237,16 +234,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				66CFAAFD1F68184E0083C3EC /* WYVerticalCenterTextFieldCell.swift in Sources */,
 				665AC8C21F5E9A8B00A16B19 /* FileObject.swift in Sources */,
 				665AC8C41F60F0FD00A16B19 /* FileService.swift in Sources */,
 				666D4B5E1F678D1C00ED3240 /* FolderCompareViewController.swift in Sources */,
-				6684812F1F5BF54D006902AE /* SingleOutlineViewController.swift in Sources */,
 				666D4B601F678D6700ED3240 /* SingleOutlineView.swift in Sources */,
-				6684812D1F5BF287006902AE /* FolderViewController.swift in Sources */,
 				668481291F5B0FE5006902AE /* Application.swift in Sources */,
 				6684811B1F5B0B24006902AE /* AppDelegate.swift in Sources */,
 				6684812B1F5B10D4006902AE /* FolderSelectedViewController.swift in Sources */,
+				66B1F1F41F69308500F846AF /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,6 +359,7 @@
 			baseConfigurationReference = 6584601C849651A878A69A0F /* Pods-FolderSync.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = FolderSync/FolderSync.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -373,6 +369,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = win.sourcecode.FolderSync;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "FolderSync/FolderSync-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -382,6 +380,7 @@
 			baseConfigurationReference = 0F26349E45600EC0F007B75A /* Pods-FolderSync.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = FolderSync/FolderSync.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -391,6 +390,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = win.sourcecode.FolderSync;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "FolderSync/FolderSync-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
