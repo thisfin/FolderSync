@@ -165,14 +165,19 @@ class FolderCompareViewController: NSViewController {
 
     private func progressIndicatorAction() {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500), execute: {
-            if self.progressIndicatorValue != self.progressIndicator.doubleValue {
+            NSLog("\(self.progressIndicatorValue) \(self.progressIndicator.doubleValue) \(self.progressIndicator.maxValue)")
+            if self.progressIndicatorValue != self.progressIndicator.doubleValue && self.progressIndicatorValue < self.progressIndicator.maxValue {
                 self.progressIndicator.doubleValue = self.progressIndicatorValue
                 self.progressIndicatorAction()
+            } else {
+                self.progressIndicator.stopAnimation(self)
+                self.progressIndicator.isHidden = true
             }
         })
     }
 
     private func reload() {
+        NSLog("a")
         if let sourcePath = UserDefaults.standard.string(forKey: Constants.sourceFolderPathKey), let targetPath = UserDefaults.standard.string(forKey: Constants.targetFolderPathKey) {
             progressIndicator.maxValue = Double(FileManager.default.subpaths(atPath: sourcePath)!.count + FileManager.default.subpaths(atPath: targetPath)!.count)
             progressIndicator.doubleValue = 0
@@ -180,9 +185,11 @@ class FolderCompareViewController: NSViewController {
             progressIndicator.isHidden = false
             progressIndicator.startAnimation(self)
 
+            NSLog("s")
             var sourceFile = FileObject.init(path: sourcePath)
             var targetFile = FileObject.init(path: targetPath)
             let fileService = FileService()
+            NSLog("d")
             fileService.nextAction = {
                 self.progressIndicatorValue += 1
             }
