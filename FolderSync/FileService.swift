@@ -9,76 +9,132 @@
 import Cocoa
 
 class FileService {
-    func compareFolder(sourceFile: inout FileObject, targetFile: inout FileObject) {
+    private let isShowHiddenFile: Bool = FolderCompareViewController.getShowHiddenFileFromUserDefaults()
+    private let fileCompareCondition: FileCompareCondition = FolderCompareViewController.getFileCompareConditionFromUserDefaults()
+
+    var nextAction: (() -> Void)?
+
+    func compareFolder(sourceFile: inout FileObject, targetFile: inout FileObject) -> Bool {
+        var result = true
+
         var sourceIterator = sourceFile.subFiles.makeIterator()
         var targetIterator = targetFile.subFiles.makeIterator()
 
         var s = sourceIterator.next()
+        donext()
         var t = targetIterator.next()
+        donext()
         while true {
             if s != nil && t != nil {
                 if s!.name == t!.name {
-                    compareFile(sourceFile: &s!, targetFile: &t!)
-
+                    if !compareFile(sourceFile: &s!, targetFile: &t!) {
+                        result = false
+                    }
                     s = sourceIterator.next()
+                    donext()
                     t = targetIterator.next()
+                    donext()
                 } else if s!.name > t!.name {
-                    // todo
-                    c2(file: t!)
-
+                    recursion(file: t!)
                     t = targetIterator.next()
+                    donext()
+                    result = false
                 } else {
-                    // todo
-                    c2(file: s!)
-
+                    recursion(file: s!)
                     s = sourceIterator.next()
+                    donext()
+                    result = false
                 }
             } else if s != nil {
-                c2(file: s!)
+                recursion(file: s!)
                 s = sourceIterator.next()
+                donext()
+                result = false
             } else if t != nil {
-                c2(file: t!)
+                recursion(file: t!)
                 t = targetIterator.next()
+                donext()
+                result = false
             } else {
                 break
             }
         }
+        return result
     }
 
-    func c2(file: FileObject) {
+    private func compareFile(sourceFile: inout FileObject, targetFile: inout FileObject) -> Bool {
+        var result = true
+        if sourceFile.type != targetFile.type { // 同名但文件类型不同
+            if sourceFile.type == .folder {
+                recursion(file: sourceFile)
+                sourceFile.compareState = .diff
+                targetFile.compareState = .diff
+                result = false
+            } else {
+                sourceFile.compareState = .diff
+                recursion(file: targetFile)
+                targetFile.compareState = .diff
+                result = false
+            }
+        } else {
+            if sourceFile.type == .folder { // 文件夹做递归
+                if compareFolder(sourceFile: &sourceFile, targetFile: &targetFile) {
+                    sourceFile.compareState = .empty
+                    targetFile.compareState = .empty
+                } else {
+                    sourceFile.compareState = .diff
+                    targetFile.compareState = .diff
+                    result = false
+                }
+            } else { // 文件做比较
+                switch fileCompareCondition {
+                case .name:
+                    sourceFile.compareState = .empty
+                    targetFile.compareState = .empty
+                case .size, .md5:
+                    var isEqual = false
+                    if fileCompareCondition == .size { // 文件size
+                        if let sSize = sourceFile.size, let tSize = targetFile.size, sSize == tSize {
+                            isEqual = true
+                        }
+                    } else if fileCompareCondition == .md5 { // md5
+                        if let sMD5 = sourceFile.safeFileMD5(), let tMD5 = targetFile.safeFileMD5(), sMD5 == tMD5 {
+                            isEqual = true
+                        }
+                    }
+
+                    if isEqual {
+                        sourceFile.compareState = .empty
+                        targetFile.compareState = .empty
+                    } else { // 按照日期做先后处理
+                        let cr = sourceFile.modificationDate!.compare(targetFile.modificationDate! as Date)
+                        switch cr {
+                        case .orderedAscending, .orderedSame:
+                            sourceFile.compareState = .old
+                            targetFile.compareState = .new
+                        case .orderedDescending:
+                            sourceFile.compareState = .new
+                            targetFile.compareState = .old
+                        }
+                        result = false
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    private func recursion(file: FileObject) {
         file.compareState = .only
+        donext()
         file.subFiles.forEach { (fileObject) in
-            c2(file: fileObject)
+            recursion(file: fileObject)
         }
     }
 
-    func compareFile(sourceFile: inout FileObject, targetFile: inout FileObject) {
-        if sourceFile.type != targetFile.type {
-            if sourceFile.type == .folder {
-                c2(file: sourceFile)
-                targetFile.compareState = .diff
-            } else {
-                sourceFile.compareState = .diff
-                c2(file: targetFile)
-            }
-        } else {
-            if sourceFile.type == .folder {
-                compareFolder(sourceFile: &sourceFile, targetFile: &targetFile)
-            } else {
-                // 文件 size & time 比较
-                let cr = sourceFile.modificationDate!.compare(targetFile.modificationDate! as Date)
-                switch cr {
-                case .orderedSame:
-                    sourceFile.compareState = .empty
-                    targetFile.compareState = .empty
-                case .orderedAscending:
-                    sourceFile.compareState = .old
-                    targetFile.compareState = .new
-                case .orderedDescending:
-                    sourceFile.compareState = .new
-                    targetFile.compareState = .old
-                }
-            }
+    private func donext() {
+        if let action = nextAction {
+            action()
         }
     }
 }

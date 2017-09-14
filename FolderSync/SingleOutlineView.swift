@@ -17,7 +17,7 @@ class SingleOutlineView: NSView {
 
     var rootFile: FileObject?
 
-    fileprivate var outlineView: NSOutlineView!
+    fileprivate(set) var outlineView: NSOutlineView!
 
     required init?(coder decoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -124,7 +124,7 @@ extension SingleOutlineView: NSOutlineViewDelegate {
             })
             switch fileObject.compareState {
             case .diff:
-                textField.textColor = .yellow
+                textField.textColor = .orange
             case .new:
                 textField.textColor = .green
             case .old:
@@ -132,7 +132,7 @@ extension SingleOutlineView: NSOutlineViewDelegate {
             case .only:
                 textField.textColor = .blue
             default:
-                ()
+                textField.textColor = .textColor
             }
 
             return view

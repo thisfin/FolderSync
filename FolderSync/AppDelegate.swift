@@ -33,8 +33,8 @@ extension AppDelegate: NSApplicationDelegate {
                 self.folderCompareWindow.makeKeyAndOrderFront(self)
                 self.folderSelectedWindow.orderOut(self)
             }
-
             return controller
+//            return ViewController()
         }()
         folderSelectedWindow.title = "Select Folder"
         folderSelectedWindow.center()

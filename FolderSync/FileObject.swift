@@ -28,6 +28,12 @@ enum FileCompareState {
     case empty  // folder & file
 }
 
+enum FileCompareCondition: Int {
+    case name = 0
+    case size
+    case md5
+}
+
 class FileObject {
     var name: String = ""
     let path: String
@@ -68,7 +74,7 @@ class FileObject {
         }
 
         if type == .folder {
-            if let urls = try? fileManager.contentsOfDirectory(at: URL(fileURLWithPath: self.path), includingPropertiesForKeys: nil, options: []) {
+            if let urls = try? fileManager.contentsOfDirectory(at: URL(fileURLWithPath: self.path), includingPropertiesForKeys: nil, options: FolderCompareViewController.getShowHiddenFileFromUserDefaults() ? [] : [.skipsHiddenFiles]) {
                 urls.sorted(by: { (url1, url2) -> Bool in
                     url1.lastPathComponent < url2.lastPathComponent
                 }).forEach({ (url) in
@@ -82,7 +88,7 @@ class FileObject {
         NSLog("")
     }
 
-    private func safeFileMD5() -> String? {
+    func safeFileMD5() -> String? {
         guard let file = FileHandle.init(forReadingAtPath: path) else {
             return nil
         }
