@@ -97,10 +97,10 @@
 				666D4B5D1F678D1C00ED3240 /* FolderCompareViewController.swift */,
 				6684812A1F5B10D4006902AE /* FolderSelectedViewController.swift */,
 				666D4B5F1F678D6700ED3240 /* SingleOutlineView.swift */,
+				66B1F1F71F6A796200F846AF /* ViewController.swift */,
 				6684811C1F5B0B24006902AE /* Assets.xcassets */,
 				665AC8BF1F5E4B4B00A16B19 /* FileOutlineView.xib */,
 				668481301F5DB07E006902AE /* FileTableCellView.xib */,
-				66B1F1F71F6A796200F846AF /* ViewController.swift */,
 			);
 			path = FolderSync;
 			sourceTree = "<group>";

@@ -12,8 +12,6 @@ class FileService {
     private let isShowHiddenFile: Bool = FolderCompareViewController.getShowHiddenFileFromUserDefaults()
     private let fileCompareCondition: FileCompareCondition = FolderCompareViewController.getFileCompareConditionFromUserDefaults()
 
-    var nextAction: (() -> Void)?
-
     func compareFolder(sourceFile: inout FileObject, targetFile: inout FileObject) -> Bool {
         var result = true
 
@@ -21,9 +19,7 @@ class FileService {
         var targetIterator = targetFile.subFiles.makeIterator()
 
         var s = sourceIterator.next()
-        donext()
         var t = targetIterator.next()
-        donext()
         while true {
             if s != nil && t != nil {
                 if s!.name == t!.name {
@@ -31,29 +27,23 @@ class FileService {
                         result = false
                     }
                     s = sourceIterator.next()
-                    donext()
                     t = targetIterator.next()
-                    donext()
                 } else if s!.name > t!.name {
                     recursion(file: t!)
                     t = targetIterator.next()
-                    donext()
                     result = false
                 } else {
                     recursion(file: s!)
                     s = sourceIterator.next()
-                    donext()
                     result = false
                 }
             } else if s != nil {
                 recursion(file: s!)
                 s = sourceIterator.next()
-                donext()
                 result = false
             } else if t != nil {
                 recursion(file: t!)
                 t = targetIterator.next()
-                donext()
                 result = false
             } else {
                 break
@@ -126,15 +116,8 @@ class FileService {
 
     private func recursion(file: FileObject) {
         file.compareState = .only
-        donext()
         file.subFiles.forEach { (fileObject) in
             recursion(file: fileObject)
-        }
-    }
-
-    private func donext() {
-        if let action = nextAction {
-            action()
         }
     }
 }

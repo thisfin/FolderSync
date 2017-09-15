@@ -13,10 +13,6 @@ class FolderCompareViewController: NSViewController {
 
     var sourceOutlineView: SingleOutlineView!
     var targetOutlineView: SingleOutlineView!
-    var isFirst = true
-
-    fileprivate var progressIndicator: NSProgressIndicator!
-    fileprivate var progressIndicatorValue: Double = 0
 
     fileprivate var isShowHiddenFile: Bool = FolderCompareViewController.getShowHiddenFileFromUserDefaults() {
         didSet {
@@ -36,6 +32,10 @@ class FolderCompareViewController: NSViewController {
             }
         }
     }
+
+    fileprivate var panel: NSPanel?
+    fileprivate var progressIndicator: NSProgressIndicator?
+    fileprivate var panelTextField: NSTextField?
 
     override func loadView() {
         view = NSView()
@@ -131,77 +131,92 @@ class FolderCompareViewController: NSViewController {
             maker.left.equalTo(expandButton.snp.right).offset(10)
             maker.bottom.equalTo(expandButton)
         }
+    }
 
-        progressIndicator = NSProgressIndicator.init()
-        progressIndicator.style = .bar
-        progressIndicator.minValue = 0
-        progressIndicator.isIndeterminate = false
-        progressIndicator.isDisplayedWhenStopped = false
-        progressIndicator.isHidden = true
-//        progressIndicator.usesThreadedAnimation = true
-        view.addSubview(progressIndicator)
-        progressIndicator.snp.makeConstraints { (maker) in
-            maker.centerX.equalToSuperview()
-            maker.bottom.equalTo(sourceOutlineView.snp.top).offset(-10)
-            maker.width.equalTo(400)
-        }
+    override func viewWillAppear() {
+        super.viewWillAppear()
 
-        let button = NSButton.init(title: "click", target: self, action: #selector(buttonClicked(_:)))
-        view.addSubview(button)
-        button.snp.makeConstraints { (maker) in
-            maker.left.equalToSuperview().offset(10)
-            maker.top.equalToSuperview().offset(10)
+        if sourceOutlineView.rootFile == nil { // 第一次初始化
+            reload()
         }
     }
 
     override func viewDidAppear() {
         super.viewDidAppear()
-
-        if isFirst {
-            reload()
-            isFirst = false
-        }
-    }
-
-    private func progressIndicatorAction() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500), execute: {
-            NSLog("\(self.progressIndicatorValue) \(self.progressIndicator.doubleValue) \(self.progressIndicator.maxValue)")
-            if self.progressIndicatorValue != self.progressIndicator.doubleValue && self.progressIndicatorValue < self.progressIndicator.maxValue {
-                self.progressIndicator.doubleValue = self.progressIndicatorValue
-                self.progressIndicatorAction()
-            } else {
-                self.progressIndicator.stopAnimation(self)
-                self.progressIndicator.isHidden = true
-            }
-        })
     }
 
     private func reload() {
-        NSLog("a")
         if let sourcePath = UserDefaults.standard.string(forKey: Constants.sourceFolderPathKey), let targetPath = UserDefaults.standard.string(forKey: Constants.targetFolderPathKey) {
-            progressIndicator.maxValue = Double(FileManager.default.subpaths(atPath: sourcePath)!.count + FileManager.default.subpaths(atPath: targetPath)!.count)
-            progressIndicator.doubleValue = 0
-            progressIndicatorValue = 0
-            progressIndicator.isHidden = false
-            progressIndicator.startAnimation(self)
-
-            NSLog("s")
+            openPanel()
+            updatePanel("检索文件...")
             var sourceFile = FileObject.init(path: sourcePath)
             var targetFile = FileObject.init(path: targetPath)
-            let fileService = FileService()
-            NSLog("d")
-            fileService.nextAction = {
-                self.progressIndicatorValue += 1
-            }
-            progressIndicatorAction()
-            _ = fileService.compareFolder(sourceFile: &sourceFile, targetFile: &targetFile)
+            updatePanel("文件对比...")
+            _ = FileService().compareFolder(sourceFile: &sourceFile, targetFile: &targetFile)
             sourceOutlineView.rootFile = sourceFile
             targetOutlineView.rootFile = targetFile
             sourceOutlineView.reload()
             targetOutlineView.reload()
+            closePanel()
+        }
+    }
 
-//            progressIndicator.stopAnimation(self)
-//            progressIndicator.isHidden = true
+    func openPanel() {
+        let panel = NSPanel(contentRect: NSMakeRect(0, 0, 240, 120), styleMask: [.borderless, .hudWindow], backing: .buffered, defer: true)
+        let progressIndicator = NSProgressIndicator.init()
+        progressIndicator.style = .spinning
+        progressIndicator.controlSize = .regular
+        if let filter = CIFilter.init(name: "CIColorControls") { // 颜色
+            filter.setDefaults()
+            filter.setValue(1, forKey: "inputBrightness")
+            progressIndicator.contentFilters = [filter]
+        }
+        let textField = NSTextField.init()
+        textField.isEditable = false
+        textField.isSelectable = false
+        textField.isBordered = false
+        textField.backgroundColor = .clear
+        textField.alignment = .center
+        textField.textColor = .white
+
+        if let contentView = panel.contentView {
+            contentView.addSubview(progressIndicator)
+            progressIndicator.snp.makeConstraints({ (maker) in
+                maker.centerY.equalToSuperview().offset(-10)
+                maker.centerX.equalToSuperview()
+            })
+            contentView.addSubview(textField)
+            textField.snp.makeConstraints({ (maker) in
+                maker.left.equalToSuperview()
+                maker.right.equalToSuperview()
+                maker.bottom.equalToSuperview().offset(-10 * 2)
+            })
+            contentView.wantsLayer = true
+            contentView.layer?.cornerRadius = 5
+            contentView.layer?.backgroundColor = panel.backgroundColor.cgColor
+            panel.backgroundColor = .clear
+        }
+
+        progressIndicator.startAnimation(self)
+        view.window?.beginSheet(panel, completionHandler: nil)
+
+        self.panel = panel
+        self.progressIndicator = progressIndicator
+        self.panelTextField = textField
+    }
+
+    func closePanel() {
+        if let progressIndicator = self.progressIndicator {
+            progressIndicator.stopAnimation(self)
+        }
+        if let panel = self.panel {
+            view.window?.endSheet(panel)
+        }
+    }
+
+    func updatePanel(_ value: String) {
+        if let textFiled = panelTextField {
+            textFiled.stringValue = value
         }
     }
 
@@ -246,25 +261,5 @@ class FolderCompareViewController: NSViewController {
     func collapseButtonClicked(_ sender: NSButton) {
         sourceOutlineView.outlineView.collapseItem(nil, collapseChildren: true)
         targetOutlineView.outlineView.collapseItem(nil, collapseChildren: true)
-    }
-
-    func buttonClicked(_ sender: NSButton) {
-        progressIndicator.maxValue = 10
-        progressIndicator.doubleValue = 0
-//        progressIndicator.isHidden = false
-        progressIndicator.startAnimation(self)
-
-//        for _ in 0 ..< 10 {
-//            sleep(3)
-////            progressIndicator.doubleValue += 1
-//            progressIndicator.increment(by: 1)
-//        }
-//        for _ in 0 ..< Int64.max {
-//            NSLog("")
-//        }
-//
-//
-//        progressIndicator.stopAnimation(self)
-//        progressIndicator.isHidden = true
     }
 }

@@ -24,11 +24,11 @@ class ViewController: NSViewController {
         view.frame = NSRect(origin: .zero, size: viewSize)
 
         progressIndicator = NSProgressIndicator.init()
+        progressIndicator.maxValue = 10
         progressIndicator.style = .bar
         progressIndicator.minValue = 0
         progressIndicator.isIndeterminate = false
         progressIndicator.isDisplayedWhenStopped = false
-        //        progressIndicator.usesThreadedAnimation = true
         view.addSubview(progressIndicator)
         progressIndicator.snp.makeConstraints { (maker) in
             maker.centerX.equalToSuperview()
@@ -36,31 +36,38 @@ class ViewController: NSViewController {
             maker.width.equalTo(400)
         }
 
-        let button1 = NSButton.init(title: "1", target: self, action: #selector(button1Clicked(_:)))
+        let button1 = NSButton.init(title: "open", target: self, action: #selector(button1Clicked(_:)))
         view.addSubview(button1)
         button1.snp.makeConstraints { (maker) in
             maker.left.equalToSuperview().offset(10)
             maker.top.equalToSuperview().offset(10)
         }
 
-        let button2 = NSButton.init(title: "2", target: self, action: #selector(button2Clicked(_:)))
+        let button2 = NSButton.init(title: "close", target: self, action: #selector(button2Clicked(_:)))
         view.addSubview(button2)
         button2.snp.makeConstraints { (maker) in
             maker.left.equalTo(button1.snp.right).offset(10)
             maker.top.equalToSuperview().offset(10)
         }
 
-        let button3 = NSButton.init(title: "3", target: self, action: #selector(button3Clicked(_:)))
+        let button3 = NSButton.init(title: "add", target: self, action: #selector(button3Clicked(_:)))
         view.addSubview(button3)
         button3.snp.makeConstraints { (maker) in
             maker.left.equalTo(button2.snp.right).offset(10)
             maker.top.equalToSuperview().offset(10)
         }
 
-        let button4 = NSButton.init(title: "4", target: self, action: #selector(button4Clicked(_:)))
+        let button4 = NSButton.init(title: "auto", target: self, action: #selector(button4Clicked(_:)))
         view.addSubview(button4)
         button4.snp.makeConstraints { (maker) in
             maker.left.equalTo(button3.snp.right).offset(10)
+            maker.top.equalToSuperview().offset(10)
+        }
+
+        let button5 = NSButton.init(title: "auto close", target: self, action: #selector(button5Clicked(_:)))
+        view.addSubview(button5)
+        button5.snp.makeConstraints { (maker) in
+            maker.left.equalTo(button4.snp.right).offset(10)
             maker.top.equalToSuperview().offset(10)
         }
     }
@@ -71,27 +78,25 @@ class ViewController: NSViewController {
             self.progressIndicator.increment(by: 1)
         })
     }
+
+    fileprivate func progressIndicatorAutoAction() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500), execute: {
+            if self.progressIndicator.doubleValue + 1 <= self.progressIndicator.maxValue {
+                self.progressIndicator.increment(by: 1)
+                self.progressIndicatorAutoAction()
+            } else {
+                self.progressIndicator.stopAnimation(self)
+                self.progressIndicator.isHidden = true
+            }
+        })
+    }
 }
 
 @objc extension ViewController {
     func button1Clicked(_ sender: NSButton) {
-        progressIndicator.maxValue = 10
         progressIndicator.doubleValue = 0
         progressIndicator.isHidden = false
         progressIndicator.startAnimation(self)
-
-        //        for _ in 0 ..< 10 {
-        //            sleep(3)
-        ////            progressIndicator.doubleValue += 1
-        //            progressIndicator.increment(by: 1)
-        //        }
-        //        for _ in 0 ..< Int64.max {
-        //            NSLog("")
-        //        }
-        //
-        //
-        //        progressIndicator.stopAnimation(self)
-        //        progressIndicator.isHidden = true
     }
 
     func button2Clicked(_ sender: NSButton) {
@@ -100,14 +105,11 @@ class ViewController: NSViewController {
     }
 
     func button3Clicked(_ sender: NSButton) {
-        progressIndicator.doubleValue += 1
-//        progressIndicator.increment(by: 1)
+        progressIndicator.increment(by: 1)
     }
 
     func button4Clicked(_ sender: NSButton) {
-        progressIndicator.maxValue = 10
         progressIndicator.doubleValue = 0
-        progressIndicator.isIndeterminate = false
         progressIndicator.isHidden = false
         progressIndicator.startAnimation(self)
 
@@ -115,7 +117,14 @@ class ViewController: NSViewController {
             progressIndicatorAction(i: i)
         }
         NSLog("end")
-//        progressIndicator.stopAnimation(self)
-//        progressIndicator.isHidden = true
+    }
+
+    func button5Clicked(_ sender: NSButton) {
+        progressIndicator.doubleValue = 0
+        progressIndicator.isHidden = false
+        progressIndicator.startAnimation(self)
+
+        progressIndicatorAutoAction()
+        NSLog("end")
     }
 }

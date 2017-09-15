@@ -18,7 +18,6 @@ class Constants: NSObject {
 }
 /*
  链接文件
- 进度条
  cp
  多选
  权限
