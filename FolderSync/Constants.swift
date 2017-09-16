@@ -17,8 +17,6 @@ class Constants: NSObject {
     static let fileCompareConditionKey = "fileCompareConditionKey"
 }
 /*
- 链接文件
  cp
- 多选
  权限
  */

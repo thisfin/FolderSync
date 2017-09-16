@@ -73,11 +73,11 @@ extension AppDelegate: NSWindowDelegate {
 }
 
 @objc extension AppDelegate {
-    func about(_ sender: NSMenuItem) {
+    fileprivate func about(_ sender: NSMenuItem) {
         NSApp.orderFrontStandardAboutPanel(self)
     }
 
-    func quit(_ sender: NSMenuItem) {
+    fileprivate func quit(_ sender: NSMenuItem) {
         NSApp.terminate(self)
     }
 }

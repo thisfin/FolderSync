@@ -104,6 +104,12 @@ class FolderCompareViewController: NSViewController {
         targetOutlineView = SingleOutlineView.init(frame: NSRect(x: 0, y: 0, width: 0, height: 0))
         view.addSubview(sourceOutlineView)
         view.addSubview(targetOutlineView)
+        sourceOutlineView.copyFileAction = { (files) in
+            self.copyFile(files: files, isSource: true)
+        }
+        targetOutlineView.copyFileAction = { (files) in
+            self.copyFile(files: files, isSource: false)
+        }
 
         sourceOutlineView.snp.makeConstraints { (maker) in
             maker.left.equalToSuperview().offset(10)
@@ -233,10 +239,14 @@ class FolderCompareViewController: NSViewController {
         }
         return FileCompareCondition(rawValue: UserDefaults.standard.integer(forKey: Constants.fileCompareConditionKey))!
     }
+
+    func copyFile(files: [FileObject], isSource: Bool) {
+        NSLog("\(files)")
+    }
 }
 
 @objc extension FolderCompareViewController {
-    func hiddenFileButtonClicked(_ sender: NSButton) {
+    fileprivate func hiddenFileButtonClicked(_ sender: NSButton) {
         switch sender.state {
         case .on:
             isShowHiddenFile = true
@@ -247,18 +257,18 @@ class FolderCompareViewController: NSViewController {
         }
     }
 
-    func compareFileButtonClicked(_ sender: NSPopUpButton) {
+    fileprivate func compareFileButtonClicked(_ sender: NSPopUpButton) {
         if let fileCompareCondition = FileCompareCondition.init(rawValue: sender.selectedTag()) {
             self.fileCompareCondition = fileCompareCondition
         }
     }
 
-    func expandButtonClicked(_ sender: NSButton) {
+    fileprivate func expandButtonClicked(_ sender: NSButton) {
         sourceOutlineView.outlineView.expandItem(nil, expandChildren: true)
         targetOutlineView.outlineView.expandItem(nil, expandChildren: true)
     }
 
-    func collapseButtonClicked(_ sender: NSButton) {
+    fileprivate func collapseButtonClicked(_ sender: NSButton) {
         sourceOutlineView.outlineView.collapseItem(nil, collapseChildren: true)
         targetOutlineView.outlineView.collapseItem(nil, collapseChildren: true)
     }

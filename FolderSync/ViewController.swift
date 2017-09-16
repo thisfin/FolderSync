@@ -93,22 +93,22 @@ class ViewController: NSViewController {
 }
 
 @objc extension ViewController {
-    func button1Clicked(_ sender: NSButton) {
+    fileprivate func button1Clicked(_ sender: NSButton) {
         progressIndicator.doubleValue = 0
         progressIndicator.isHidden = false
         progressIndicator.startAnimation(self)
     }
 
-    func button2Clicked(_ sender: NSButton) {
+    fileprivate func button2Clicked(_ sender: NSButton) {
         progressIndicator.stopAnimation(self)
         progressIndicator.isHidden = true
     }
 
-    func button3Clicked(_ sender: NSButton) {
+    fileprivate func button3Clicked(_ sender: NSButton) {
         progressIndicator.increment(by: 1)
     }
 
-    func button4Clicked(_ sender: NSButton) {
+    fileprivate func button4Clicked(_ sender: NSButton) {
         progressIndicator.doubleValue = 0
         progressIndicator.isHidden = false
         progressIndicator.startAnimation(self)
@@ -119,7 +119,7 @@ class ViewController: NSViewController {
         NSLog("end")
     }
 
-    func button5Clicked(_ sender: NSButton) {
+    fileprivate func button5Clicked(_ sender: NSButton) {
         progressIndicator.doubleValue = 0
         progressIndicator.isHidden = false
         progressIndicator.startAnimation(self)

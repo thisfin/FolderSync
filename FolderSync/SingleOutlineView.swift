@@ -16,6 +16,8 @@ class SingleOutlineView: NSView {
     private let cellIdentifier = "fileTableCellView"
 
     var rootFile: FileObject?
+    var eventIndex: Int? // 暂时无用
+    var copyFileAction: (([FileObject]) -> Void)?
 
     fileprivate(set) var outlineView: NSOutlineView!
 
@@ -59,6 +61,13 @@ class SingleOutlineView: NSView {
         if let tableColumn = outlineView.tableColumns.first {
             tableColumn.resizingMask = .autoresizingMask
         }
+        outlineView.allowsMultipleSelection = true
+        outlineView.menu = {
+            let menu = NSMenu()
+            menu.delegate = self
+            return menu
+        }()
+        outlineView.doubleAction = #selector(doubleClicked(_:))
     }
 
     func reload() {
@@ -118,8 +127,7 @@ extension SingleOutlineView: NSOutlineViewDelegate {
             textField.backgroundColor = .clear
             textField.snp.makeConstraints({ (maker) in
                 maker.left.equalTo(imageView.snp.right).offset(10)
-                maker.top.equalToSuperview()
-                maker.bottom.equalToSuperview()
+                maker.centerY.equalToSuperview()
                 maker.right.equalToSuperview()
             })
             switch fileObject.compareState {
@@ -135,6 +143,11 @@ extension SingleOutlineView: NSOutlineViewDelegate {
                 textField.textColor = .textColor
             }
 
+            view.menu = {
+                return NSMenu.init()
+            }()
+            view.menu?.delegate = self
+
             return view
         }
         return nil
@@ -142,5 +155,37 @@ extension SingleOutlineView: NSOutlineViewDelegate {
 
     func outlineView(_ outlineView: NSOutlineView, heightOfRowByItem item: Any) -> CGFloat {
         return 25
+    }
+}
+
+extension SingleOutlineView: NSMenuDelegate {
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        menu.removeAllItems()
+        menu.addItem(withTitle: "将选中文件覆盖到对应路径", action: #selector(copyFile), keyEquivalent: "")
+    }
+}
+
+@objc extension SingleOutlineView {
+    fileprivate func doubleClicked(_ sender: NSOutlineView) { // 双击展开或关闭
+        let index = sender.clickedRow
+        if let item = sender.item(atRow: index), sender.isExpandable(item) {
+            if sender.isItemExpanded(item) {
+                sender.collapseItem(item)
+            } else {
+                sender.expandItem(item)
+            }
+        }
+    }
+
+    fileprivate func copyFile() {
+        var selectedItem = [FileObject]()
+        outlineView.selectedRowIndexes.forEach { (index) in
+            if let fileObject = outlineView.item(atRow: index) as? FileObject {
+                selectedItem.append(fileObject)
+            }
+            if let action = copyFileAction {
+                action(selectedItem)
+            }
+        }
     }
 }

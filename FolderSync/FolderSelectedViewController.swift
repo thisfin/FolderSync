@@ -145,15 +145,15 @@ extension FolderSelectedViewController: NSTextFieldDelegate {
 }
 
 @objc extension FolderSelectedViewController {
-    func sourceButtonClicked(_ sender: NSButton) {
+    fileprivate func sourceButtonClicked(_ sender: NSButton) {
         folderSelect("source")
     }
 
-    func targetButtonClicked(_ sender: NSButton) {
+    fileprivate func targetButtonClicked(_ sender: NSButton) {
         folderSelect("target")
     }
 
-    func nextButtonClicked(_ sender: NSButton) {
+    fileprivate func nextButtonClicked(_ sender: NSButton) {
         if let action = nextAction {
             action()
         }

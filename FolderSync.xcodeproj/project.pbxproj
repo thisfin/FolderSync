@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		662926191F6D2909004C5300 /* OutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662926181F6D2909004C5300 /* OutlineView.swift */; };
 		665AC8C01F5E4B4B00A16B19 /* FileOutlineView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 665AC8BF1F5E4B4B00A16B19 /* FileOutlineView.xib */; };
 		665AC8C21F5E9A8B00A16B19 /* FileObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665AC8C11F5E9A8B00A16B19 /* FileObject.swift */; };
 		665AC8C41F60F0FD00A16B19 /* FileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665AC8C31F60F0FD00A16B19 /* FileService.swift */; };
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		0F26349E45600EC0F007B75A /* Pods-FolderSync.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FolderSync.release.xcconfig"; path = "Pods/Target Support Files/Pods-FolderSync/Pods-FolderSync.release.xcconfig"; sourceTree = "<group>"; };
 		6584601C849651A878A69A0F /* Pods-FolderSync.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FolderSync.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FolderSync/Pods-FolderSync.debug.xcconfig"; sourceTree = "<group>"; };
+		662926181F6D2909004C5300 /* OutlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlineView.swift; sourceTree = "<group>"; };
 		665AC8BF1F5E4B4B00A16B19 /* FileOutlineView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FileOutlineView.xib; sourceTree = "<group>"; };
 		665AC8C11F5E9A8B00A16B19 /* FileObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileObject.swift; sourceTree = "<group>"; };
 		665AC8C31F60F0FD00A16B19 /* FileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileService.swift; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 				665AC8C31F60F0FD00A16B19 /* FileService.swift */,
 				666D4B5D1F678D1C00ED3240 /* FolderCompareViewController.swift */,
 				6684812A1F5B10D4006902AE /* FolderSelectedViewController.swift */,
+				662926181F6D2909004C5300 /* OutlineView.swift */,
 				666D4B5F1F678D6700ED3240 /* SingleOutlineView.swift */,
 				66B1F1F71F6A796200F846AF /* ViewController.swift */,
 				6684811C1F5B0B24006902AE /* Assets.xcassets */,
@@ -245,6 +248,7 @@
 				665AC8C21F5E9A8B00A16B19 /* FileObject.swift in Sources */,
 				665AC8C41F60F0FD00A16B19 /* FileService.swift in Sources */,
 				666D4B5E1F678D1C00ED3240 /* FolderCompareViewController.swift in Sources */,
+				662926191F6D2909004C5300 /* OutlineView.swift in Sources */,
 				66B1F1F81F6A796200F846AF /* ViewController.swift in Sources */,
 				666D4B601F678D6700ED3240 /* SingleOutlineView.swift in Sources */,
 				668481291F5B0FE5006902AE /* Application.swift in Sources */,
