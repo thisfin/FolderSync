@@ -47,6 +47,18 @@ class FolderCompareViewController: NSViewController {
         view.wantsLayer = true
         view.frame = NSRect(origin: .zero, size: viewSize)
 
+        let attributedString = NSMutableAttributedString.init(string: "不同 版本较新 版本较老 独有")
+        attributedString.addAttribute(.foregroundColor, value: NSColor.systemOrange, range: NSRange.init(location: 0, length: 2))
+        attributedString.addAttribute(.foregroundColor, value: NSColor.systemGreen, range: NSRange.init(location: 3, length: 4))
+        attributedString.addAttribute(.foregroundColor, value: NSColor.systemRed, range: NSRange.init(location: 8, length: 4))
+        attributedString.addAttribute(.foregroundColor, value: NSColor.systemBlue, range: NSRange.init(location: 13, length: 2))
+        let contentTextField = NSTextField.init(labelWithAttributedString: attributedString)
+        view.addSubview(contentTextField)
+        contentTextField.snp.makeConstraints { (maker) in
+            maker.top.equalToSuperview().offset(10)
+            maker.left.equalToSuperview().offset(10)
+        }
+
         let hiddenFildButton = NSButton.init(checkboxWithTitle: "显示隐藏文件", target: self, action: #selector(hiddenFileButtonClicked(_:)))
         hiddenFildButton.state = isShowHiddenFile ? .on : .off
         view.addSubview(hiddenFildButton)
@@ -172,6 +184,7 @@ class FolderCompareViewController: NSViewController {
         let progressIndicator = NSProgressIndicator.init()
         progressIndicator.style = .spinning
         progressIndicator.controlSize = .regular
+        progressIndicator.usesThreadedAnimation = true
         if let filter = CIFilter.init(name: "CIColorControls") { // 颜色
             filter.setDefaults()
             filter.setValue(1, forKey: "inputBrightness")

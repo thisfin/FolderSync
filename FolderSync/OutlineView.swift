@@ -10,6 +10,10 @@ import Cocoa
 
 class OutlineView: NSOutlineView {
     override func menu(for event: NSEvent) -> NSMenu? {
+        if event.type != .rightMouseDown {
+            return super.menu(for: event)
+        }
+
         let index = row(at: convert(event.locationInWindow, from: nil))
 //        if selectedRowIndexes.contains(index) { // 选中的 row 才会右键菜单
         if isRowSelected(index) {

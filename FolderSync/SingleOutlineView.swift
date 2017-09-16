@@ -132,13 +132,13 @@ extension SingleOutlineView: NSOutlineViewDelegate {
             })
             switch fileObject.compareState {
             case .diff:
-                textField.textColor = .orange
+                textField.textColor = .systemOrange
             case .new:
-                textField.textColor = .green
+                textField.textColor = .systemGreen
             case .old:
-                textField.textColor = .red
+                textField.textColor = .systemRed
             case .only:
-                textField.textColor = .blue
+                textField.textColor = .systemBlue
             default:
                 textField.textColor = .textColor
             }
