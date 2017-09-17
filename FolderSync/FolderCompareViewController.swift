@@ -137,16 +137,22 @@ class FolderCompareViewController: NSViewController {
             maker.width.equalTo(sourceOutlineView.snp.width).multipliedBy(1)
         }
 
-        let expandButton = NSButton.init(title: "expand", target: self, action: #selector(expandButtonClicked(_:)))
-        let collapseButton = NSButton.init(title: "collapse", target: self, action: #selector(collapseButtonClicked(_:)))
+        let expandButton = NSButton.init(title: "展开", target: self, action: #selector(expandButtonClicked(_:)))
+        let collapseButton = NSButton.init(title: "收起", target: self, action: #selector(collapseButtonClicked(_:)))
+        let flushButton = NSButton.init(title: "刷新", target: self, action: #selector(flushButtonClicked(_:)))
         view.addSubview(expandButton)
         view.addSubview(collapseButton)
+        view.addSubview(flushButton)
         expandButton.snp.makeConstraints { (maker) in
             maker.left.equalToSuperview().offset(10)
             maker.bottom.equalTo(sourceOutlineView.snp.top).offset(-10)
         }
         collapseButton.snp.makeConstraints { (maker) in
             maker.left.equalTo(expandButton.snp.right).offset(10)
+            maker.bottom.equalTo(expandButton)
+        }
+        flushButton.snp.makeConstraints { (maker) in
+            maker.left.equalTo(collapseButton.snp.right).offset(10)
             maker.bottom.equalTo(expandButton)
         }
     }
@@ -254,7 +260,23 @@ class FolderCompareViewController: NSViewController {
     }
 
     func copyFile(files: [FileObject], isSource: Bool) {
-        NSLog("\(files)")
+        let fileManager = FileManager.default
+        if let sourcePath = UserDefaults.standard.string(forKey: Constants.sourceFolderPathKey), let targetPath = UserDefaults.standard.string(forKey: Constants.targetFolderPathKey) {
+            files.forEach { (fileObject) in
+                let source = (isSource ? sourcePath : targetPath) + "/" + fileObject.relativePath
+                let target = (isSource ? targetPath : sourcePath) + "/" + fileObject.relativePath
+
+                if fileManager.fileExists(atPath: target) { // 目标存在则删除
+                    try? fileManager.removeItem(atPath: target)
+                }
+                let url = URL.init(fileURLWithPath: target).deletingLastPathComponent()
+                if !fileManager.fileExists(atPath: url.path) { // 创建目标父文件夹
+                    try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+                }
+                try? fileManager.copyItem(atPath: source, toPath: target) // cp
+            }
+        }
+        reload()
     }
 }
 
@@ -284,5 +306,9 @@ class FolderCompareViewController: NSViewController {
     fileprivate func collapseButtonClicked(_ sender: NSButton) {
         sourceOutlineView.outlineView.collapseItem(nil, collapseChildren: true)
         targetOutlineView.outlineView.collapseItem(nil, collapseChildren: true)
+    }
+
+    fileprivate func flushButtonClicked(_ sender: NSButton) {
+        reload()
     }
 }
