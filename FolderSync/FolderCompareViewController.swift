@@ -140,9 +140,11 @@ class FolderCompareViewController: NSViewController {
         let expandButton = NSButton.init(title: "展开", target: self, action: #selector(expandButtonClicked(_:)))
         let collapseButton = NSButton.init(title: "收起", target: self, action: #selector(collapseButtonClicked(_:)))
         let flushButton = NSButton.init(title: "刷新", target: self, action: #selector(flushButtonClicked(_:)))
+        let button = NSButton.init(title: "button", target: self, action: #selector(buttonClicked(_:)))
         view.addSubview(expandButton)
         view.addSubview(collapseButton)
         view.addSubview(flushButton)
+        view.addSubview(button)
         expandButton.snp.makeConstraints { (maker) in
             maker.left.equalToSuperview().offset(10)
             maker.bottom.equalTo(sourceOutlineView.snp.top).offset(-10)
@@ -153,6 +155,10 @@ class FolderCompareViewController: NSViewController {
         }
         flushButton.snp.makeConstraints { (maker) in
             maker.left.equalTo(collapseButton.snp.right).offset(10)
+            maker.bottom.equalTo(expandButton)
+        }
+        button.snp.makeConstraints { (maker) in
+            maker.left.equalTo(flushButton.snp.right).offset(10)
             maker.bottom.equalTo(expandButton)
         }
     }
@@ -167,6 +173,31 @@ class FolderCompareViewController: NSViewController {
 
     override func viewDidAppear() {
         super.viewDidAppear()
+    }
+
+    @available(OSX 10.12.2, *)
+    override func makeTouchBar() -> NSTouchBar? {
+        let touchBar = NSTouchBar()
+        touchBar.delegate = self
+        touchBar.customizationIdentifier = NSTouchBar.CustomizationIdentifier.create(type: FolderCompareViewController.self)
+        touchBar.defaultItemIdentifiers = isFirst ? [.expand, .collapse] : [.expand, .collapse, .flush]
+//touchBar.customizationAllowedItemIdentifiers = [.flush]
+//        touchBar.customizationRequiredItemIdentifiers = []
+//        touchBar.customizationAllowedItemIdentifiers = [.expand, .collapse, .flush]
+//        touchBar.customizationRequiredItemIdentifiers = [.expand, .collapse, .flush]
+        return touchBar
+    }
+
+    var isFirst = true
+
+    @objc func buttonClicked(_ sender: NSButton) {
+        if #available(OSX 10.12.2, *) {
+
+            isFirst = false
+//                    touchBar!.customizationAllowedItemIdentifiers = [.flush]
+            touchBar = nil
+
+        }
     }
 
     private func reload() {
@@ -278,6 +309,31 @@ class FolderCompareViewController: NSViewController {
         }
         reload()
     }
+}
+
+extension FolderCompareViewController: NSTouchBarDelegate {
+    @available(OSX 10.12.2, *)
+    public func touchBar(_ touchBar: NSTouchBar, makeItemForIdentifier identifier: NSTouchBarItem.Identifier) -> NSTouchBarItem? {
+        let touchBarItem = NSCustomTouchBarItem(identifier: identifier)
+        switch identifier {
+        case .expand:
+            touchBarItem.view = NSButton(title: "展开", target: self, action: #selector(expandButtonClicked(_:)))
+        case .collapse:
+            touchBarItem.view = NSButton(title: "收起", target: self, action: #selector(collapseButtonClicked(_:)))
+        case .flush:
+            touchBarItem.view = NSButton(title: "刷新", target: self, action: #selector(flushButtonClicked(_:)))
+        default:
+            ()
+        }
+        return touchBarItem
+    }
+}
+
+@available(OSX 10.12.2, *)
+private extension NSTouchBarItem.Identifier {
+    static let expand = create(type: FolderCompareViewController.self, suffix: "expand")
+    static let collapse = create(type: FolderCompareViewController.self, suffix: "collapse")
+    static let flush = create(type: FolderCompareViewController.self, suffix: "flush")
 }
 
 @objc extension FolderCompareViewController {
