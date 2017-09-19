@@ -93,6 +93,15 @@ class FolderSelectedViewController: NSViewController {
         setSubmitButtonStatus()
     }
 
+    @available(OSX 10.12.2, *)
+    override func makeTouchBar() -> NSTouchBar? {
+        let touchBar = NSTouchBar()
+        touchBar.delegate = self
+        touchBar.customizationIdentifier = NSTouchBar.CustomizationIdentifier.create(type: FolderSelectedViewController.self)
+        touchBar.defaultItemIdentifiers = nextButton.isEnabled ? [.source, .target, .next] : [.source, .target]
+        return touchBar
+    }
+
     fileprivate func folderSelect(_ folderType: String) {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
@@ -134,6 +143,9 @@ class FolderSelectedViewController: NSViewController {
             UserDefaults.standard.set(sourceTextField.stringValue, forKey: Constants.sourceFolderPathKey)
             UserDefaults.standard.set(targetTextField.stringValue, forKey: Constants.targetFolderPathKey)
         }
+        if #available(OSX 10.12.2, *) {
+            touchBar = nil
+        }
     }
 }
 
@@ -142,6 +154,31 @@ extension FolderSelectedViewController: NSTextFieldDelegate {
         setSubmitButtonStatus()
         return true
     }
+}
+
+@available(OSX 10.12.2, *)
+extension FolderSelectedViewController: NSTouchBarDelegate {
+    public func touchBar(_ touchBar: NSTouchBar, makeItemForIdentifier identifier: NSTouchBarItem.Identifier) -> NSTouchBarItem? {
+        let touchBarItem = NSCustomTouchBarItem(identifier: identifier)
+        switch identifier {
+        case .source:
+            touchBarItem.view = NSButton(title: "source", target: self, action: #selector(sourceButtonClicked(_:)))
+        case .target:
+            touchBarItem.view = NSButton(title: "target", target: self, action: #selector(targetButtonClicked(_:)))
+        case .next:
+            touchBarItem.view = NSButton(title: "next", target: self, action: #selector(nextButtonClicked(_:)))
+        default:
+            ()
+        }
+        return touchBarItem
+    }
+}
+
+@available(OSX 10.12.2, *)
+private extension NSTouchBarItem.Identifier {
+    static let source = create(type: FolderCompareViewController.self, suffix: "source")
+    static let target = create(type: FolderCompareViewController.self, suffix: "target")
+    static let next = create(type: FolderCompareViewController.self, suffix: "next")
 }
 
 @objc extension FolderSelectedViewController {
