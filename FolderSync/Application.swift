@@ -9,7 +9,7 @@
 import Cocoa
 
 class Application: NSApplication {
-    let appDelegate = AppDelegate()
+    private let appDelegate = AppDelegate()
 
     override init() {
         super.init()

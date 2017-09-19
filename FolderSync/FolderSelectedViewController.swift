@@ -13,9 +13,9 @@ class FolderSelectedViewController: NSViewController {
     private let viewSize = NSMakeSize(600, 150)
     private let margin: CGFloat = 20
 
-    fileprivate var nextButton: NSButton!
-    fileprivate var sourceTextField: NSTextField!
-    fileprivate var targetTextField: NSTextField!
+    private var nextButton: NSButton!
+    private var sourceTextField: NSTextField!
+    private var targetTextField: NSTextField!
 
     var nextAction: (() -> Void)?
 
@@ -29,10 +29,10 @@ class FolderSelectedViewController: NSViewController {
         view.wantsLayer = true
         view.frame = NSRect(origin: .zero, size: viewSize)
 
-        let sourceButton = NSButton(title: "source folder", target: self, action: #selector(FolderSelectedViewController.sourceButtonClicked(_:)))
+        let sourceButton = NSButton(title: "source folder", target: self, action: #selector(sourceButtonClicked(_:)))
         view.addSubview(sourceButton)
 
-        let targetButton = NSButton(title: "target folder", target: self, action: #selector(FolderSelectedViewController.targetButtonClicked(_:)))
+        let targetButton = NSButton(title: "target folder", target: self, action: #selector(targetButtonClicked(_:)))
         view.addSubview(targetButton)
 
         sourceTextField = NSTextField()
@@ -104,7 +104,7 @@ class FolderSelectedViewController: NSViewController {
         return touchBar
     }
 
-    fileprivate func folderSelect(_ folderType: String) {
+    private func folderSelect(_ folderType: String) {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.canChooseFiles = false
@@ -160,7 +160,7 @@ extension FolderSelectedViewController: NSTextFieldDelegate {
 
 @available(OSX 10.12.2, *)
 extension FolderSelectedViewController: NSTouchBarDelegate {
-    public func touchBar(_ touchBar: NSTouchBar, makeItemForIdentifier identifier: NSTouchBarItem.Identifier) -> NSTouchBarItem? {
+    func touchBar(_ touchBar: NSTouchBar, makeItemForIdentifier identifier: NSTouchBarItem.Identifier) -> NSTouchBarItem? {
         let touchBarItem = NSCustomTouchBarItem(identifier: identifier)
         switch identifier {
         case .source:
@@ -184,15 +184,15 @@ private extension NSTouchBarItem.Identifier {
 }
 
 @objc extension FolderSelectedViewController {
-    fileprivate func sourceButtonClicked(_ sender: NSButton) {
+    private func sourceButtonClicked(_ sender: NSButton) {
         folderSelect("source")
     }
 
-    fileprivate func targetButtonClicked(_ sender: NSButton) {
+    private func targetButtonClicked(_ sender: NSButton) {
         folderSelect("target")
     }
 
-    fileprivate func nextButtonClicked(_ sender: NSButton) {
+    private func nextButtonClicked(_ sender: NSButton) {
         FilePermissions.sharedInstance.addBookmark(sourceURL: URL(fileURLWithPath: sourceTextField.stringValue), targetURL: URL(fileURLWithPath: targetTextField.stringValue))
         if let action = nextAction {
             action()

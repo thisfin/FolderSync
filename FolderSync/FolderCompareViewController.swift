@@ -170,6 +170,9 @@ class FolderCompareViewController: NSViewController {
     override func viewWillAppear() {
         super.viewWillAppear()
 
+        NotificationCenter.default.addObserver(self, selector: #selector(notificationReceive(_:)), name: .reloadEnd, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(notificationReceive(_:)), name: .updateState, object: nil)
+
         if sourceOutlineView.rootFile == nil { // 第一次初始化
             reload()
         }
@@ -177,6 +180,13 @@ class FolderCompareViewController: NSViewController {
 
     override func viewDidAppear() {
         super.viewDidAppear()
+    }
+
+    override func viewDidDisappear() {
+        super.viewDidDisappear()
+
+        NotificationCenter.default.removeObserver(self, name: .reloadEnd, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .updateState, object: nil)
     }
 
     @available(OSX 10.12.2, *)
@@ -189,24 +199,28 @@ class FolderCompareViewController: NSViewController {
     }
 
     private func reload() {
+        openPanel()
+        DispatchQueue.global().async { // 如果不放在别的线程, 则菊花的动画不会运行...
+            self.reloadSlice()
+        }
+    }
+
+    private func reloadSlice() {
+        NotificationCenter.default.post(name: .updateState, object: nil, userInfo: ["value" : "检索文件..."])
         if let sourcePath = UserDefaults.standard.string(forKey: Constants.sourceFolderPathKey), let targetPath = UserDefaults.standard.string(forKey: Constants.targetFolderPathKey) {
-            openPanel()
-            updatePanel("检索文件...")
             FilePermissions.sharedInstance.handle {
                 var sourceFile = FileObject.init(path: sourcePath)
                 var targetFile = FileObject.init(path: targetPath)
-                updatePanel("文件对比...")
+                NotificationCenter.default.post(name: .updateState, object: nil, userInfo: ["value" : "文件对比..."])
                 _ = FileService().compareFolder(sourceFile: &sourceFile, targetFile: &targetFile)
                 sourceOutlineView.rootFile = sourceFile
                 targetOutlineView.rootFile = targetFile
             }
-            sourceOutlineView.reload()
-            targetOutlineView.reload()
-            closePanel()
         }
+        NotificationCenter.default.post(name: .reloadEnd, object: nil)
     }
 
-    func openPanel() {
+    private func openPanel() {
         let panel = NSPanel(contentRect: NSMakeRect(0, 0, 240, 120), styleMask: [.borderless, .hudWindow], backing: .buffered, defer: true)
         let progressIndicator = NSProgressIndicator.init()
         progressIndicator.style = .spinning
@@ -251,18 +265,17 @@ class FolderCompareViewController: NSViewController {
         self.panelTextField = textField
     }
 
-    func closePanel() {
+    private func closePanel() {
+        sourceOutlineView.reload()
+        targetOutlineView.reload()
         if let progressIndicator = self.progressIndicator {
             progressIndicator.stopAnimation(self)
         }
+        if let panelTextField = self.panelTextField {
+            panelTextField.stringValue = ""
+        }
         if let panel = self.panel {
             view.window?.endSheet(panel)
-        }
-    }
-
-    func updatePanel(_ value: String) {
-        if let textFiled = panelTextField {
-            textFiled.stringValue = value
         }
     }
 
@@ -280,8 +293,17 @@ class FolderCompareViewController: NSViewController {
         return FileCompareCondition(rawValue: UserDefaults.standard.integer(forKey: Constants.fileCompareConditionKey))!
     }
 
-    func copyFile(files: [FileObject], isSource: Bool) {
+    private func copyFile(files: [FileObject], isSource: Bool) {
+        openPanel()
+        DispatchQueue.global().async {
+            self.copySlice(files: files, isSource: isSource)
+            self.reloadSlice()
+        }
+    }
+
+    private func copySlice(files: [FileObject], isSource: Bool) {
         let fileManager = FileManager.default
+        NotificationCenter.default.post(name: .updateState, object: nil, userInfo: ["value" : "拷贝文件..."])
         if let sourcePath = UserDefaults.standard.string(forKey: Constants.sourceFolderPathKey), let targetPath = UserDefaults.standard.string(forKey: Constants.targetFolderPathKey) {
             files.forEach { (fileObject) in
                 let source = (isSource ? sourcePath : targetPath) + "/" + fileObject.relativePath
@@ -303,7 +325,6 @@ class FolderCompareViewController: NSViewController {
                 }
             }
         }
-        reload()
     }
 }
 
@@ -333,7 +354,7 @@ private extension NSTouchBarItem.Identifier {
 }
 
 @objc extension FolderCompareViewController {
-    fileprivate func hiddenFileButtonClicked(_ sender: NSButton) {
+    private func hiddenFileButtonClicked(_ sender: NSButton) {
         switch sender.state {
         case .on:
             isShowHiddenFile = true
@@ -344,23 +365,43 @@ private extension NSTouchBarItem.Identifier {
         }
     }
 
-    fileprivate func compareFileButtonClicked(_ sender: NSPopUpButton) {
+    private func compareFileButtonClicked(_ sender: NSPopUpButton) {
         if let fileCompareCondition = FileCompareCondition.init(rawValue: sender.selectedTag()) {
             self.fileCompareCondition = fileCompareCondition
         }
     }
 
-    fileprivate func expandButtonClicked(_ sender: NSButton) {
+    private func expandButtonClicked(_ sender: NSButton) {
         sourceOutlineView.outlineView.expandItem(nil, expandChildren: true)
         targetOutlineView.outlineView.expandItem(nil, expandChildren: true)
     }
 
-    fileprivate func collapseButtonClicked(_ sender: NSButton) {
+    private func collapseButtonClicked(_ sender: NSButton) {
         sourceOutlineView.outlineView.collapseItem(nil, collapseChildren: true)
         targetOutlineView.outlineView.collapseItem(nil, collapseChildren: true)
     }
 
-    fileprivate func flushButtonClicked(_ sender: NSButton) {
+    private func flushButtonClicked(_ sender: NSButton) {
         reload()
     }
+
+    private func notificationReceive(_ notification: Notification) {
+        DispatchQueue.main.async { // ui 修改必须放在主线程
+            switch notification.name {
+            case .reloadEnd:
+                self.closePanel()
+            case .updateState:
+                if let value = notification.userInfo?["value"] as? String {
+                    self.panelTextField?.stringValue = value
+                }
+            default:
+                ()
+            }
+        }
+    }
+}
+
+private extension Notification.Name {
+    static let reloadEnd = Notification.Name("notificationNameEnd")
+    static let updateState = Notification.Name("notificationNameState")
 }

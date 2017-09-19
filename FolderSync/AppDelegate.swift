@@ -12,8 +12,8 @@ import Cocoa
 class AppDelegate: NSObject {
     var window: NSWindow!
 
-    fileprivate var folderSelectedWindow: NSWindow!
-    fileprivate var folderCompareWindow: NSWindow!
+    private var folderSelectedWindow: NSWindow!
+    private var folderCompareWindow: NSWindow!
 }
 
 extension AppDelegate: NSApplicationDelegate {
@@ -66,18 +66,18 @@ extension AppDelegate: NSWindowDelegate {
         return false
     }
 
-    public func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         folderSelectedWindow.setIsVisible(true)
         return true
     }
 }
 
 @objc extension AppDelegate {
-    fileprivate func about(_ sender: NSMenuItem) {
+    private func about(_ sender: NSMenuItem) {
         NSApp.orderFrontStandardAboutPanel(self)
     }
 
-    fileprivate func quit(_ sender: NSMenuItem) {
+    private func quit(_ sender: NSMenuItem) {
         NSApp.terminate(self)
     }
 }

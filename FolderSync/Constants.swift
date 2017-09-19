@@ -16,8 +16,3 @@ class Constants: NSObject {
     static let showHiddenFileKey = "showHiddenFileKey"
     static let fileCompareConditionKey = "fileCompareConditionKey"
 }
-/*
- 提示
-
- 异常
- */
