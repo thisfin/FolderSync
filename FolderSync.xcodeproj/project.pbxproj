@@ -20,6 +20,7 @@
 		668481311F5DB07E006902AE /* FileTableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 668481301F5DB07E006902AE /* FileTableCellView.xib */; };
 		66B1F1F41F69308500F846AF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B1F1F31F69308500F846AF /* Constants.swift */; };
 		66B1F1F81F6A796200F846AF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66B1F1F71F6A796200F846AF /* ViewController.swift */; };
+		66DAF06C1F70C10C0027C305 /* FilePermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66DAF06B1F70C10C0027C305 /* FilePermissions.swift */; };
 		66F907621F703168006BEB54 /* NSTouchBar+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66F907611F703168006BEB54 /* NSTouchBar+Helper.swift */; };
 		DA98C9A4B274D4549E309834 /* Pods_FolderSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C031BD6CF52C711DB76E2B /* Pods_FolderSync.framework */; };
 /* End PBXBuildFile section */
@@ -44,6 +45,7 @@
 		66B1F1EF1F691B9F00F846AF /* FolderSync-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FolderSync-Bridging-Header.h"; sourceTree = "<group>"; };
 		66B1F1F31F69308500F846AF /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		66B1F1F71F6A796200F846AF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		66DAF06B1F70C10C0027C305 /* FilePermissions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePermissions.swift; sourceTree = "<group>"; };
 		66F907611F703168006BEB54 /* NSTouchBar+Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSTouchBar+Helper.swift"; sourceTree = "<group>"; };
 		D5C031BD6CF52C711DB76E2B /* Pods_FolderSync.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FolderSync.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -97,6 +99,7 @@
 				668481281F5B0FE5006902AE /* Application.swift */,
 				66B1F1F31F69308500F846AF /* Constants.swift */,
 				665AC8C11F5E9A8B00A16B19 /* FileObject.swift */,
+				66DAF06B1F70C10C0027C305 /* FilePermissions.swift */,
 				665AC8C31F60F0FD00A16B19 /* FileService.swift */,
 				666D4B5D1F678D1C00ED3240 /* FolderCompareViewController.swift */,
 				6684812A1F5B10D4006902AE /* FolderSelectedViewController.swift */,
@@ -158,7 +161,7 @@
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -252,6 +255,7 @@
 				665AC8C41F60F0FD00A16B19 /* FileService.swift in Sources */,
 				666D4B5E1F678D1C00ED3240 /* FolderCompareViewController.swift in Sources */,
 				662926191F6D2909004C5300 /* OutlineView.swift in Sources */,
+				66DAF06C1F70C10C0027C305 /* FilePermissions.swift in Sources */,
 				66B1F1F81F6A796200F846AF /* ViewController.swift in Sources */,
 				66F907621F703168006BEB54 /* NSTouchBar+Helper.swift in Sources */,
 				666D4B601F678D6700ED3240 /* SingleOutlineView.swift in Sources */,
@@ -377,6 +381,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = FolderSync/FolderSync.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -399,6 +404,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = FolderSync/FolderSync.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

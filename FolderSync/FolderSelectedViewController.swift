@@ -39,7 +39,8 @@ class FolderSelectedViewController: NSViewController {
         sourceTextField.delegate = self
         sourceTextField.isEditable = false
         view.addSubview(sourceTextField)
-        if let sourcePath = UserDefaults.standard.string(forKey: Constants.sourceFolderPathKey), FileManager.default.fileExists(atPath: sourcePath) {
+        if let sourcePath = UserDefaults.standard.string(forKey: Constants.sourceFolderPathKey), let sourceURL = FilePermissions.sharedInstance.getBookmarkURL(Constants.sourceFolderPathBookmarkKey),
+            sourcePath == sourceURL.path, FileManager.default.fileExists(atPath: sourcePath) {
             sourceTextField.stringValue = sourcePath
         }
 
@@ -47,7 +48,8 @@ class FolderSelectedViewController: NSViewController {
         targetTextField.delegate = self
         targetTextField.isEditable = false
         view.addSubview(targetTextField)
-        if let targetPath = UserDefaults.standard.string(forKey: Constants.targetFolderPathKey), FileManager.default.fileExists(atPath: targetPath) {
+        if let targetPath = UserDefaults.standard.string(forKey: Constants.targetFolderPathKey), let targetURL = FilePermissions.sharedInstance.getBookmarkURL(Constants.targetFolderPathBookmarkKey),
+            targetPath == targetURL.path, FileManager.default.fileExists(atPath: targetPath) {
             targetTextField.stringValue = targetPath
         }
 
@@ -191,6 +193,7 @@ private extension NSTouchBarItem.Identifier {
     }
 
     fileprivate func nextButtonClicked(_ sender: NSButton) {
+        FilePermissions.sharedInstance.addBookmark(sourceURL: URL(fileURLWithPath: sourceTextField.stringValue), targetURL: URL(fileURLWithPath: targetTextField.stringValue))
         if let action = nextAction {
             action()
         }

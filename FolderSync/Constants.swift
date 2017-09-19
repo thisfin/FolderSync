@@ -17,8 +17,7 @@ class Constants: NSObject {
     static let fileCompareConditionKey = "fileCompareConditionKey"
 }
 /*
- 权限
- touchbar
- 异常
  提示
+
+ 异常
  */

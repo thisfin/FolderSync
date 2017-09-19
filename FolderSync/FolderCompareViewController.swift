@@ -163,6 +163,10 @@ class FolderCompareViewController: NSViewController {
         }
     }
 
+    @objc func buttonClicked(_ sender: NSButton) {
+
+    }
+
     override func viewWillAppear() {
         super.viewWillAppear()
 
@@ -180,36 +184,22 @@ class FolderCompareViewController: NSViewController {
         let touchBar = NSTouchBar()
         touchBar.delegate = self
         touchBar.customizationIdentifier = NSTouchBar.CustomizationIdentifier.create(type: FolderCompareViewController.self)
-        touchBar.defaultItemIdentifiers = isFirst ? [.expand, .collapse] : [.expand, .collapse, .flush]
-//touchBar.customizationAllowedItemIdentifiers = [.flush]
-//        touchBar.customizationRequiredItemIdentifiers = []
-//        touchBar.customizationAllowedItemIdentifiers = [.expand, .collapse, .flush]
-//        touchBar.customizationRequiredItemIdentifiers = [.expand, .collapse, .flush]
+        touchBar.defaultItemIdentifiers = [.expand, .collapse, .flush]
         return touchBar
-    }
-
-    var isFirst = true
-
-    @objc func buttonClicked(_ sender: NSButton) {
-        if #available(OSX 10.12.2, *) {
-
-            isFirst = false
-//                    touchBar!.customizationAllowedItemIdentifiers = [.flush]
-            touchBar = nil
-
-        }
     }
 
     private func reload() {
         if let sourcePath = UserDefaults.standard.string(forKey: Constants.sourceFolderPathKey), let targetPath = UserDefaults.standard.string(forKey: Constants.targetFolderPathKey) {
             openPanel()
             updatePanel("检索文件...")
-            var sourceFile = FileObject.init(path: sourcePath)
-            var targetFile = FileObject.init(path: targetPath)
-            updatePanel("文件对比...")
-            _ = FileService().compareFolder(sourceFile: &sourceFile, targetFile: &targetFile)
-            sourceOutlineView.rootFile = sourceFile
-            targetOutlineView.rootFile = targetFile
+            FilePermissions.sharedInstance.handle {
+                var sourceFile = FileObject.init(path: sourcePath)
+                var targetFile = FileObject.init(path: targetPath)
+                updatePanel("文件对比...")
+                _ = FileService().compareFolder(sourceFile: &sourceFile, targetFile: &targetFile)
+                sourceOutlineView.rootFile = sourceFile
+                targetOutlineView.rootFile = targetFile
+            }
             sourceOutlineView.reload()
             targetOutlineView.reload()
             closePanel()
@@ -298,21 +288,27 @@ class FolderCompareViewController: NSViewController {
                 let target = (isSource ? targetPath : sourcePath) + "/" + fileObject.relativePath
 
                 if fileManager.fileExists(atPath: target) { // 目标存在则删除
-                    try? fileManager.removeItem(atPath: target)
+                    FilePermissions.sharedInstance.handle {
+                        try? fileManager.removeItem(atPath: target)
+                    }
                 }
                 let url = URL.init(fileURLWithPath: target).deletingLastPathComponent()
                 if !fileManager.fileExists(atPath: url.path) { // 创建目标父文件夹
-                    try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+                    FilePermissions.sharedInstance.handle {
+                        try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+                    }
                 }
-                try? fileManager.copyItem(atPath: source, toPath: target) // cp
+                FilePermissions.sharedInstance.handle {
+                    try? fileManager.copyItem(atPath: source, toPath: target) // cp
+                }
             }
         }
         reload()
     }
 }
 
+@available(OSX 10.12.2, *)
 extension FolderCompareViewController: NSTouchBarDelegate {
-    @available(OSX 10.12.2, *)
     public func touchBar(_ touchBar: NSTouchBar, makeItemForIdentifier identifier: NSTouchBarItem.Identifier) -> NSTouchBarItem? {
         let touchBarItem = NSCustomTouchBarItem(identifier: identifier)
         switch identifier {
