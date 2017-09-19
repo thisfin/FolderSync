@@ -84,10 +84,6 @@ class FileObject {
         }
     }
 
-    func output() {
-        NSLog("")
-    }
-
     func safeFileMD5() -> String? {
         guard let file = FileHandle.init(forReadingAtPath: path) else {
             return nil

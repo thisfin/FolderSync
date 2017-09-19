@@ -19,7 +19,7 @@ class SingleOutlineView: NSView {
     var eventIndex: Int? // 暂时无用
     var copyFileAction: (([FileObject]) -> Void)?
 
-    fileprivate(set) var outlineView: NSOutlineView!
+    private(set) var outlineView: NSOutlineView!
 
     required init?(coder decoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -166,7 +166,7 @@ extension SingleOutlineView: NSMenuDelegate {
 }
 
 @objc extension SingleOutlineView {
-    fileprivate func doubleClicked(_ sender: NSOutlineView) { // 双击展开或关闭
+    private func doubleClicked(_ sender: NSOutlineView) { // 双击展开或关闭
         let index = sender.clickedRow
         if let item = sender.item(atRow: index), sender.isExpandable(item) {
             if sender.isItemExpanded(item) {
@@ -177,7 +177,7 @@ extension SingleOutlineView: NSMenuDelegate {
         }
     }
 
-    fileprivate func copyFile() {
+    private func copyFile() {
         var selectedItem = [FileObject]()
         outlineView.selectedRowIndexes.forEach { (index) in
             if let fileObject = outlineView.item(atRow: index) as? FileObject {

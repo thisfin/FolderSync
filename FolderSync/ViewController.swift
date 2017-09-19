@@ -11,7 +11,7 @@ import Cocoa
 class ViewController: NSViewController {
     private let viewSize = NSMakeSize(600, 150)
 
-    fileprivate var progressIndicator: NSProgressIndicator!
+    private var progressIndicator: NSProgressIndicator!
     
     override func loadView() {
         view = NSView()
@@ -72,14 +72,13 @@ class ViewController: NSViewController {
         }
     }
 
-    fileprivate func progressIndicatorAction(i: Int) {
+    private func progressIndicatorAction(i: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500 * i), execute: {
-            NSLog("\(i)")
             self.progressIndicator.increment(by: 1)
         })
     }
 
-    fileprivate func progressIndicatorAutoAction() {
+    private func progressIndicatorAutoAction() {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500), execute: {
             if self.progressIndicator.doubleValue + 1 <= self.progressIndicator.maxValue {
                 self.progressIndicator.increment(by: 1)
@@ -93,22 +92,22 @@ class ViewController: NSViewController {
 }
 
 @objc extension ViewController {
-    fileprivate func button1Clicked(_ sender: NSButton) {
+    private func button1Clicked(_ sender: NSButton) {
         progressIndicator.doubleValue = 0
         progressIndicator.isHidden = false
         progressIndicator.startAnimation(self)
     }
 
-    fileprivate func button2Clicked(_ sender: NSButton) {
+    private func button2Clicked(_ sender: NSButton) {
         progressIndicator.stopAnimation(self)
         progressIndicator.isHidden = true
     }
 
-    fileprivate func button3Clicked(_ sender: NSButton) {
+    private func button3Clicked(_ sender: NSButton) {
         progressIndicator.increment(by: 1)
     }
 
-    fileprivate func button4Clicked(_ sender: NSButton) {
+    private func button4Clicked(_ sender: NSButton) {
         progressIndicator.doubleValue = 0
         progressIndicator.isHidden = false
         progressIndicator.startAnimation(self)
@@ -116,15 +115,13 @@ class ViewController: NSViewController {
         for i in 0 ..< 10 {
             progressIndicatorAction(i: i)
         }
-        NSLog("end")
     }
 
-    fileprivate func button5Clicked(_ sender: NSButton) {
+    private func button5Clicked(_ sender: NSButton) {
         progressIndicator.doubleValue = 0
         progressIndicator.isHidden = false
         progressIndicator.startAnimation(self)
 
         progressIndicatorAutoAction()
-        NSLog("end")
     }
 }

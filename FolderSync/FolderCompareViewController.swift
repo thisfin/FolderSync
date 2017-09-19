@@ -14,7 +14,7 @@ class FolderCompareViewController: NSViewController {
     var sourceOutlineView: SingleOutlineView!
     var targetOutlineView: SingleOutlineView!
 
-    fileprivate var isShowHiddenFile: Bool = FolderCompareViewController.getShowHiddenFileFromUserDefaults() {
+    private var isShowHiddenFile: Bool = FolderCompareViewController.getShowHiddenFileFromUserDefaults() {
         didSet {
             if oldValue != isShowHiddenFile {
                 UserDefaults.standard.set(isShowHiddenFile, forKey: Constants.showHiddenFileKey)
@@ -23,19 +23,18 @@ class FolderCompareViewController: NSViewController {
         }
     }
 
-    fileprivate var fileCompareCondition: FileCompareCondition = FolderCompareViewController.getFileCompareConditionFromUserDefaults() {
+    private var fileCompareCondition: FileCompareCondition = FolderCompareViewController.getFileCompareConditionFromUserDefaults() {
         didSet {
             if oldValue != fileCompareCondition {
-                NSLog("\(fileCompareCondition)")
                 UserDefaults.standard.set(fileCompareCondition.rawValue, forKey: Constants.fileCompareConditionKey)
                 reload()
             }
         }
     }
 
-    fileprivate var panel: NSPanel?
-    fileprivate var progressIndicator: NSProgressIndicator?
-    fileprivate var panelTextField: NSTextField?
+    private var panel: NSPanel?
+    private var progressIndicator: NSProgressIndicator?
+    private var panelTextField: NSTextField?
 
     override func loadView() {
         view = NSView()
