@@ -19,13 +19,15 @@ class FilePermissions {
 
         if let oldSourceURL = getBookmarkURL(Constants.sourceFolderPathBookmarkKey), oldSourceURL.path == sourceURL.path {
         } else {
-            defaults.setValue(try! sourceURL.bookmarkData(options: .withSecurityScope), forKey: Constants.sourceFolderPathBookmarkKey)
+            let data = try? sourceURL.bookmarkData(options: .withSecurityScope)
+            defaults.setValue(data, forKey: Constants.sourceFolderPathBookmarkKey)
             defaults.synchronize()
         }
 
         if let oldTargetURL = getBookmarkURL(Constants.targetFolderPathBookmarkKey), oldTargetURL.path == targetURL.path {
         } else {
-            defaults.setValue(try! targetURL.bookmarkData(options: .withSecurityScope), forKey: Constants.targetFolderPathBookmarkKey)
+            let data = try? targetURL.bookmarkData(options: .withSecurityScope)
+            defaults.setValue(data, forKey: Constants.targetFolderPathBookmarkKey)
             defaults.synchronize()
         }
     }
@@ -40,7 +42,7 @@ class FilePermissions {
 
     func getBookmarkURL(_ key: String) -> URL? {
         var isStale = false
-        if let data = UserDefaults.standard.object(forKey: key) as? Data, let url = try! URL(resolvingBookmarkData: data, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale), !isStale {
+        if let data = UserDefaults.standard.object(forKey: key) as? Data, let url = try? URL(resolvingBookmarkData: data, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale), !isStale {
             return url
         }
         return nil
